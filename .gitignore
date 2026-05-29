@@ -6,6 +6,8 @@
 .idea/
 
 # clasp
-# The scriptId in apps-script/.clasp.json is fine to commit; the
-# credentials file is per-user and lives in $HOME, never in the repo.
+# Keep both the credentials file (per-user, $HOME) and the project pointer
+# (.clasp.json holds the scriptId) out of the public repo. The repo ships
+# a .clasp.json.example to copy from.
 .clasprc.json
+apps-script/.clasp.json

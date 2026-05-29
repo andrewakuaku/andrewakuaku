@@ -1,130 +1,196 @@
 # Andrew Akuaku — Portfolio
 
-A static portfolio site in plain **HTML, CSS and JavaScript** — no build step, no framework.
+A static portfolio site in plain **HTML, CSS, and JavaScript** — no build step, no framework. Forms are wired to a **Google Apps Script** backend that writes to a Sheet, emails me, and (optionally) marks paid memberships once Stripe sends the webhook.
 
-- **`index.html`** — landing page (hero, featured work, mentorship teaser, contact form)
-- **`portfolio.html`** — project grid + about/skills
-- **`mentorship.html`** — mentorship offering, plans, and application form
-- **`css/styles.css`** — all styling, including the signature **cutout-card** component
-- **`js/main.js`** — mobile nav, scroll reveals, and form submission
-- **`apps-script/Code.gs`** — Google Sheets backend for the forms
+---
 
-## Design
+## Table of contents
 
-The card style is adapted from the *be* landing page: the **inverted-corner cutout** —
-a pill CTA notched into a card corner, where the pill's panel is filled with the page
-background and two small fillet SVGs bridge its edges so the notch reads as one smooth
-concave curve. The palette was reworked to a neutral/modern indigo scheme
-(`--accent: #4f46e5`); colors and fonts live in `:root` at the top of `css/styles.css`.
+1. [Repository layout](#repository-layout)
+2. [Run locally](#run-locally)
+3. [How the forms work](#how-the-forms-work)
+4. [Apps Script backend setup](#apps-script-backend-setup)
+   - [One-time: bind a Sheet and configure properties](#one-time-bind-a-sheet-and-configure-properties)
+   - [Optional: edit code locally with clasp](#optional-edit-code-locally-with-clasp)
+5. [Spam protection (reCAPTCHA v3)](#spam-protection-recaptcha-v3)
+6. [Paid memberships (Stripe)](#paid-memberships-stripe)
+7. [Deploying the site](#deploying-the-site)
+8. [Sensitive data — what's where](#sensitive-data--whats-where)
+
+---
+
+## Repository layout
+
+```
+.
+├── index.html               # landing
+├── portfolio.html           # project grid + skills filter
+├── community.html           # community pitch + membership tiers + apply drawer
+├── contact.html             # contact-page wrapper that opens a drawer form
+├── thanks.html              # post-payment landing (Stripe redirect target)
+├── project-*.html           # detail page per project (calhhs, mural, baobab,
+│                            # hcl, be, drewq)
+├── css/styles.css           # all styles, design tokens at the top
+├── js/main.js               # mobile nav, scroll reveals, form submit, marquee
+├── assets/
+│   ├── photos/              # hero photography
+│   └── projects/            # screenshots, project-specific videos
+├── apps-script/
+│   ├── Code.gs              # form handler + Stripe webhook (server-side)
+│   ├── appsscript.json      # Apps Script manifest
+│   └── .clasp.json.example  # template — copy to .clasp.json, paste scriptId
+└── README.md
+```
 
 ## Run locally
 
-It's static — open `index.html` directly, or serve the folder:
+The site is static. Either open `index.html` directly, or serve the folder so relative imports (`/assets/`, `/css/`) resolve cleanly:
 
-```bash
-python3 -m http.server 8000   # then visit http://localhost:8000
+```sh
+python3 -m http.server 8000
+# then visit http://localhost:8000
 ```
 
-## Connecting the forms to Google Sheets
+The forms will hit the live Apps Script endpoint configured in `js/main.js → SHEETS_ENDPOINT` — so submissions from `localhost` write to the same Sheet as production. If you'd rather not pollute the real Sheet during development, point the constant at a separate test deployment.
 
-The contact and mentorship forms post to a **Google Apps Script web app** that appends
-rows to a Google Sheet. One Sheet holds both forms — each writes to its own tab
-(`Contact`, `Mentorship`), named by the form's `data-sheet` attribute.
+## How the forms work
 
-1. **Create a Sheet** at <https://sheets.new>. Give it any name.
-2. **Open the script editor:** in the Sheet, *Extensions → Apps Script*.
-3. **Paste the code:** replace the default `Code.gs` contents with `apps-script/Code.gs`
-   from this repo, then save.
-4. **Deploy:** *Deploy → New deployment → type "Web app"*.
-   - *Execute as:* **Me**
-   - *Who has access:* **Anyone**
-   - Click **Deploy**, authorize when prompted, and copy the **Web app URL**
-     (ends in `/exec`).
-5. **Wire it up:** open `js/main.js` and set `SHEETS_ENDPOINT` to that URL.
+Two forms talk to one Apps Script Web App:
 
-Submit each form once — the tabs and header rows are created automatically from the
-field names. To confirm the endpoint is live, open the `/exec` URL in a browser; it
-should return `{"result":"success", ...}`.
+- **Contact** (`contact.html` drawer) — `data-sheet="Contact"` writes to a `Contact` tab.
+- **Community application** (`community.html` drawer) — `data-sheet="Mentorship"` writes to a `Mentorship` tab and, for paid tiers, redirects to a Stripe Payment Link after the row is saved.
 
-> **Note on CORS:** the form is sent as `FormData` (not JSON), which avoids a CORS
-> preflight, so submissions work from any static host. If you later switch to a JSON
-> body you'll need to handle preflight separately.
+Both forms `POST` `multipart/form-data` to the `/exec` URL. Apps Script:
+
+1. Verifies the **reCAPTCHA v3** token against Google's siteverify API (skipped silently if no secret is configured).
+2. Picks (or creates) a tab named after the `formName` field.
+3. Auto-maintains the header row from the field names — adding new columns as new fields appear.
+4. Appends the submission as a new row.
+5. Emails a human-readable summary to `NOTIFY_EMAIL`, with `Reply-To` set to the visitor's email so I can reply directly from Gmail.
+6. Returns `{"result":"success"}` (or `{"result":"error", "message": "…"}`).
+
+For a paid `Graduates` / `Professionals` application, `js/main.js` then redirects to the Stripe Payment Link with `?prefilled_email=<email>&client_reference_id=<email>`. After payment, Stripe POSTs `checkout.session.completed` back to the same `/exec` URL — Apps Script verifies the session via the Stripe API, finds the matching application row by email, and stamps `paidAt` + `stripeSessionId` columns on it.
+
+## Apps Script backend setup
+
+Everything below assumes you (or whoever's deploying) is the script owner. The deployment runs as the owner, so visitors never see an OAuth prompt.
+
+### One-time: bind a Sheet and configure properties
+
+1. **Create the Sheet** at <https://sheets.new>. Name it anything (e.g. *Portfolio submissions*). Copy its ID from the URL — it's the long string between `/d/` and `/edit`.
+2. **Create the script project** at <https://script.google.com> → *New project*. Paste `apps-script/Code.gs` and `apps-script/appsscript.json` from this repo, or use `clasp push` (see below).
+3. **Deploy as a Web app**: *Deploy → New deployment → Web app*.
+   - *Execute as*: **Me**
+   - *Who has access*: **Anyone**
+   - Click **Deploy**, click through the "Google hasn't verified this app" warning (it's your own script, click *Advanced → Go to project (unsafe) → Allow*), and copy the `/exec` URL.
+4. **Wire the URL into `js/main.js`** → `SHEETS_ENDPOINT`.
+5. **Add Script Properties** in *Project Settings → Script Properties*:
+
+   | Property             | Value                                                                                  | Required for                          |
+   |----------------------|----------------------------------------------------------------------------------------|---------------------------------------|
+   | `SHEET_ID`           | The bare ID, or the full Sheet URL — the script extracts the ID either way.            | All form writes                       |
+   | `NOTIFY_EMAIL`       | Where notifications go (e.g. your gmail).                                              | Email-on-submit                       |
+   | `RECAPTCHA_SECRET`   | reCAPTCHA v3 *secret* key from <https://www.google.com/recaptcha/admin>.               | Spam protection (skipped if missing)  |
+   | `STRIPE_SECRET_KEY`  | `sk_test_…` (test mode) or `sk_live_…` (production).                                   | Stripe webhook → mark rows paid       |
+
+6. **Trigger the OAuth scope grant** for sending email. From the editor, pick the `testNotify` function in the dropdown above the run button → **Run** → click through the "unverified" warning once → **Allow** (the new scope listed will be *"Send email as you"*). After this the deployment can send mail on form submissions too.
 
 ### Re-deploying after edits
 
-Apps Script keeps the same URL only if you update the **existing** deployment:
-*Deploy → Manage deployments → (edit) → New version → Deploy*. Creating a brand-new
-deployment gives a new URL you'd have to paste into `main.js` again.
+Updating an **existing** Web App deployment keeps the same `/exec` URL:
 
-### Pushing from this repo with `clasp`
+*Deploy → Manage deployments → (pencil) → Version: New version → Deploy.*
 
-The `apps-script/` directory is wired up for [clasp](https://github.com/google/clasp)
-so you can edit `Code.gs` here and push it to script.google.com instead of
-copy-pasting.
+Creating a brand-new deployment gives a brand-new URL you'd have to repaste into `js/main.js`. Don't do that unless you mean to.
+
+### Optional: edit code locally with clasp
+
+The `apps-script/` directory is set up for [clasp](https://github.com/google/clasp) so you can edit, version, and push from this repo instead of pasting into the script editor.
 
 ```sh
 # one-time
 npm install -g @google/clasp
-clasp login                         # opens a browser; auth stored in ~/.clasprc.json
+clasp login                                  # browser OAuth; creds in ~/.clasprc.json
+cp apps-script/.clasp.json.example apps-script/.clasp.json
+# edit .clasp.json and paste your scriptId   (script.google.com URL contains it)
 
-# every time you edit Code.gs
+# every edit
 cd apps-script
-clasp push                          # uploads Code.gs + appsscript.json
-clasp deployments                   # find the deployment ID (one starting "AKfy…")
-clasp redeploy <DEPLOYMENT_ID>      # bumps the existing /exec URL to the new version
+clasp push                                   # uploads Code.gs + appsscript.json
+clasp deployments                            # list IDs
+clasp redeploy <DEPLOYMENT_ID> -d "what changed"
+# same /exec URL stays live; visitors don't need to do anything
 ```
 
-`apps-script/.clasp.json` already points at the Sheets-bound script project, and
-`apps-script/appsscript.json` is the local copy of the manifest. If you've
-customised the server-side manifest (extra OAuth scopes, webapp settings, etc.),
-run `clasp pull` once first so your local file matches before pushing.
+`.clasp.json` is gitignored — the scriptId stays local.
 
-## Spam protection (Google reCAPTCHA v3)
+## Spam protection (reCAPTCHA v3)
 
-The forms use **invisible reCAPTCHA v3** (score-based) so submissions look
-unchanged to humans but are scored 0.0–1.0 and rejected server-side below
-0.5. The site key is hardcoded in `js/main.js` (it's public — same key the
-source app uses); the **secret** lives in Apps Script as a Script Property
-so it never reaches the browser.
+The forms use **invisible reCAPTCHA v3** (score-based). On submit, `js/main.js` requests a token and ships it as `recaptchaToken`. Apps Script verifies it against `siteverify` with the secret, and rejects scores under 0.5 server-side.
 
-1. In the Apps Script project (the same one bound to your Sheet), open
-   *Project Settings* (gear icon).
-2. Scroll to **Script properties** → **Add script property**.
-3. Add: `Property = RECAPTCHA_SECRET`, `Value = <your reCAPTCHA v3 secret>`.
-   (You can use the same secret the source app uses, or generate a new key
-   pair at <https://www.google.com/recaptcha/admin>.)
-4. Save. Verification kicks in immediately on the next deployment of
-   `Code.gs` (or on the next request if you didn't change the script).
+The **site key** is hardcoded in `js/main.js` — it's public by design. The **secret key** lives only in Apps Script as the `RECAPTCHA_SECRET` Script Property. If that property isn't set, verification is skipped and the form still works (useful for local dev).
 
-If the property is missing, verification is skipped (`ok: true,
-reason: 'no-secret-configured'`) so local development still works.
+To use your own keys, generate a v3 pair at <https://www.google.com/recaptcha/admin>, swap the site key in `js/main.js`, and set the secret as the Script Property.
 
-## Connecting Stripe (paid memberships)
+## Paid memberships (Stripe)
 
-The community application form redirects to Stripe Checkout for paid tiers
-after a successful submission to the Sheet. We use **Stripe Payment Links**
-so no backend is needed — Stripe hosts the checkout, handles the subscription,
-and sends webhooks to you.
+The community membership has three tiers (`community.html`):
 
-1. **Create a recurring price** for each paid tier in the Stripe dashboard
-   (*Products → + Add product*): one for `Graduates · $25/mo` and one for
-   `Professionals · $50/mo`. Set the billing to **Recurring · monthly**.
-2. From each product, **Create payment link** (the "Buy button" / link icon).
-   Copy the resulting `https://buy.stripe.com/…` URL.
-3. Open `js/main.js` and paste the URLs into `STRIPE_PAYMENT_LINKS`:
+| Tier            | Price         | Flow                                                              |
+|-----------------|---------------|-------------------------------------------------------------------|
+| Students        | Free          | Application → thank-you message. No Stripe.                       |
+| Graduates       | $15 / month   | Application → Stripe Payment Link → `/thanks.html`.               |
+| Professionals   | $25 / month   | Application → Stripe Payment Link → `/thanks.html`.               |
+
+To enable the paid flow:
+
+1. **Create products in Stripe** (Test mode first — toggle at the top of the dashboard).
+   - *Products → Add product*. Set them up as **Recurring · monthly** at $15 and $25.
+2. **For each product → Create payment link**.
+   - In the link settings, set *After payment → Don't show confirmation page → Redirect customers to* → your site's `https://<your-domain>/thanks.html` (Stripe accepts http://localhost during development).
+3. **Paste the two URLs into `js/main.js → STRIPE_PAYMENT_LINKS`**. The keys must match the membership labels:
    ```js
    const STRIPE_PAYMENT_LINKS = {
-     "Graduates: $25/mo":     "https://buy.stripe.com/your_graduates_link",
-     "Professionals: $50/mo": "https://buy.stripe.com/your_professionals_link",
+     "Graduates: $15/mo":     "https://buy.stripe.com/your_graduates_link",
+     "Professionals: $25/mo": "https://buy.stripe.com/your_professionals_link",
    };
    ```
-4. The form appends `?prefilled_email=…&client_reference_id=…` to the URL
-   when redirecting, so the Stripe checkout pre-fills the applicant's email
-   and you can tie the Stripe customer back to the Sheet row.
+4. **Add the webhook endpoint** in Stripe → *Developers → Webhooks → Add endpoint*:
+   - URL: your Apps Script `/exec` URL (same one the forms post to).
+   - Events: just `checkout.session.completed`.
+   - No signing-secret config needed — Apps Script re-fetches the session from the Stripe API to verify it, which is why `STRIPE_SECRET_KEY` is required.
+5. **Test end-to-end** with Stripe's test card `4242 4242 4242 4242` (any future date / any CVC / any ZIP). You should see:
+   - Redirect to `/thanks.html`
+   - A new row in the *Mentorship* tab with `paidAt` and `stripeSessionId` columns populated within ~30s of payment.
+   - A `[Portfolio] New Graduates application — Daisy Lee` email.
+   - A Stripe receipt to the applicant.
 
-Free (Students) tier skips Stripe entirely — the application is the whole flow.
+When you're ready for real payments, flip the Stripe dashboard to Live mode, re-create the products + Payment Links + webhook there, swap `STRIPE_SECRET_KEY` to `sk_live_…`, and swap the URLs in `js/main.js`.
 
-## Deploy the site
+## Deploying the site
 
-Any static host works — GitHub Pages, Netlify, Vercel, Cloudflare Pages. For GitHub
-Pages: push to a repo and enable Pages on the `main` branch root.
+Any static host works — GitHub Pages, Netlify, Vercel, Cloudflare Pages. For GitHub Pages:
+
+1. Push this repo to GitHub.
+2. *Settings → Pages → Build and deployment: Deploy from a branch → main / root → Save.*
+3. The site goes live within ~30 seconds at `https://<your-username>.github.io/<repo-name>/`. A custom domain can be set on the same page.
+
+Every push to `main` redeploys automatically.
+
+## Sensitive data — what's where
+
+Public (safe to commit, served to every visitor anyway):
+
+- `js/main.js` — `RECAPTCHA_SITE_KEY`, `SHEETS_ENDPOINT`, `STRIPE_PAYMENT_LINKS`. Public by design.
+- HTML files — all copy and the reCAPTCHA site key.
+
+Out of source control (kept in Apps Script Script Properties or the user's `$HOME`):
+
+- `NOTIFY_EMAIL` — the inbox that receives notifications.
+- `SHEET_ID` — the Sheet to write into.
+- `RECAPTCHA_SECRET` — paired with the public site key.
+- `STRIPE_SECRET_KEY` — `sk_test_…` / `sk_live_…`. Never paste into source.
+- `apps-script/.clasp.json` — pointer to the script project. Gitignored; ship `.clasp.json.example`.
+- `~/.clasprc.json` — clasp OAuth credentials. Lives in your home directory; gitignored as a safety net.
+
+If you fork or copy this repo, the only "secret" that's hardcoded in the published JS is the reCAPTCHA *site* key — replace it with your own and the rest of the stack will use whatever Script Properties you set.

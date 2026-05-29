@@ -10,10 +10,11 @@
  */
 
 // ---------- config ----------
-// All form submissions trigger an email to NOTIFY_EMAIL. To override from
-// the Apps Script UI without editing code, set a Script Property called
-// NOTIFY_EMAIL (the property takes priority over the constant below).
-var NOTIFY_EMAIL = "andrewakuaku@gmail.com";
+// Where notification emails go. Set this via a Script Property called
+// NOTIFY_EMAIL — keeps personal addresses out of source control. If the
+// property isn't set the script silently skips notifications so the form
+// still works for sheet writes.
+var NOTIFY_EMAIL = "";
 
 // The Spreadsheet to write rows into. Set a Script Property named SHEET_ID
 // to either (a) the bare Sheet ID, or (b) the full https://docs.google.com/
