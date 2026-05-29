@@ -141,8 +141,9 @@ function testNotify() {
  * Background: Apps Script's POST response delivery via /macros/echo silently
  * drops ContentService responses for some script projects, returning a 405
  * "Sorry, unable to open the file" Drive page even when doPost ran fine.
- * HtmlService responses go through a different delivery path that works.
- * The client reads the body as text and parses JSON itself.
+ * HtmlService responses are delivered reliably. The client uses no-cors
+ * fetch so it can't read the body either way; the Sheet row is the source
+ * of truth.
  */
 function json(obj) {
   return HtmlService.createHtmlOutput(JSON.stringify(obj));
