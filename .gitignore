@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# clasp
+# The scriptId in apps-script/.clasp.json is fine to commit; the
+# credentials file is per-user and lives in $HOME, never in the repo.
+.clasprc.json

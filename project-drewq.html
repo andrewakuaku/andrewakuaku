@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DREWQ | Andrew Akuaku</title>
+  <meta name="description" content="DREWQ: a platform for reading, verifying, and managing ECOWAS Identity Cards, with end-to-end demos for POS payment and transport tap-to-pay." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html" class="active">Portfolio</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="community.html#apply" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" style="padding-top:32px">
+      <a href="portfolio.html" class="back-link">← All projects</a>
+    </div>
+
+    <section class="project-hero wrap">
+      <div class="reveal">
+        <span class="eyebrow">Project</span>
+        <h1 class="project-title">DREWQ</h1>
+        <p class="lead">
+          A platform for reading, verifying, and managing ECOWAS Identity
+          Cards, with end-to-end demos for POS payment and transport
+          tap-to-pay.
+        </p>
+      </div>
+
+      <div class="project-meta reveal">
+        <div>
+          <span class="project-meta__label">Role</span>
+          <span class="project-meta__value">Engineer &amp; Builder</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Type</span>
+          <span class="project-meta__value">Personal project</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Year</span>
+          <span class="project-meta__value">2025</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Stack</span>
+          <span class="project-meta__value">Next.js · FastAPI · Python · PostgreSQL</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Live</span>
+          <span class="project-meta__value"><a href="https://drewq.com/" target="_blank" rel="noopener">drewq.com →</a></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <div class="browser-frame reveal" role="img" aria-label="DREWQ operator dashboard with total citizens, total scans, and a recent scans table for live ECOWAS Ghana Card reads.">
+        <div class="browser-frame__bar">
+          <div class="browser-frame__dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="browser-frame__url">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span><b>drewq.com</b>/dashboard</span>
+          </div>
+          <span style="width:52px" aria-hidden="true"></span>
+        </div>
+        <div class="browser-frame__body">
+          <img src="assets/projects/drewq-hero.png" alt="DREWQ operator dashboard with total citizens, total scans, and a recent scans table for live ECOWAS Ghana Card reads." />
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section project-content">
+      <div class="reveal">
+        <h2>About this project</h2>
+        <p>
+          DREWQ is a platform for reading, verifying, and storing data from
+          ECOWAS Identity Cards. It's built for developers, retailers,
+          transit operators, and enterprises in Ghana who want to add
+          identity verification or card-based payment to their products
+          without writing card-reader code from scratch.
+        </p>
+        <p>
+          The system has three parts: a small agent that runs on the
+          operator's machine where the USB card reader is plugged in, a
+          backend service that the agent connects to, and a dashboard that
+          shows live scan results in the browser. When someone inserts a
+          card, the agent reads the chip directly using the same standard
+          protocol that passports use, and the platform verifies and stores
+          the data securely, with enterprise-grade encryption, two-factor
+          authentication, and rate limiting built in.
+        </p>
+        <p>
+          On top of the platform, I built two end-to-end demos, each with
+          two flows.
+        </p>
+        <p>
+          <strong>Pay with Ghana Card</strong> is a point-of-sale demo
+          showing how a customer can pay at a shop or POS terminal. One
+          version is a quick verify-and-pay: insert the card, enter the
+          last 4 digits and check digit of the Ghana PIN, payment
+          authorised. The other adds a 5-digit payment PIN on a keypad for
+          a fuller verification + authorisation flow, the way a real card
+          transaction works. The two are designed for different stakes.
+          The quick check is for everyday low-value purchases where
+          checkout speed matters most; the full PIN flow is for higher-
+          value transactions where both the customer and the merchant
+          want bank-card-style authorisation. Knowing the identity is
+          verified is one thing; proving the holder authorised this
+          specific payment is another.
+        </p>
+        <p>
+          <strong>Transport Payment</strong> is a tap-to-pay flow for
+          everyday mobility. The bus demo is one-tap: the card itself is
+          the fare, no PIN or identity check required, designed for fast
+          boarding at GH₵ 3.50 a ride. The scooter demo adds identity
+          verification: insert the card, confirm with a PIN suffix, and the
+          scooter unlocks while a GH₵ 15.00 fare is charged automatically.
+          The two flows trade off speed against accountability. At peak
+          hours, dozens of passengers board a bus in minutes; any extra
+          friction means missed buses and longer queues, and the fare is
+          low enough that the small fraud risk is worth the throughput. A
+          scooter rental is higher-value, the vehicle can be damaged or
+          misused, and the operator needs a record of who took it out, so
+          the PIN step doubles as both authorisation and identity record.
+        </p>
+        <p>
+          Together, the four flows show how a single identity layer can
+          power very different transactions, with the right amount of
+          verification for each one and no more.
+        </p>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-top:16px;padding-bottom:80px">
+      <div class="next-project reveal">
+        <span class="eyebrow">Next project</span>
+        <a href="project-calhhs.html"><h3>CalHHS Benefits Assistant →</h3></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+        <p class="footer-note">AI Product Engineer · Berkeley, CA</p>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/andrewakuaku" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

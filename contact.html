@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Andrew Akuaku</title>
+  <meta name="description" content="Get in touch with Andrew Akuaku, AI Product Engineer. Projects, roles, the community, or just to say hello." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.google.com/recaptcha/api.js?render=6LdXUxQsAAAAAKPwO5EreqApY46Eqm0UxeeW4dwI" async defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html" class="active">Contact</a>
+        <a href="community.html#apply" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- intro: centered, opens the contact drawer -->
+    <section class="wrap section">
+      <div class="reveal" style="max-width:640px;margin:0 auto;text-align:center">
+        <span class="eyebrow">Contact</span>
+        <h1 style="font-size:clamp(2rem,5vw,3.6rem);margin-top:14px;line-height:1.08">
+          Let's start a <span class="accent">conversation</span>.
+        </h1>
+        <p class="lead" style="margin-top:14px;margin-left:auto;margin-right:auto">
+          Working on a project, research, or just want to connect? I'm always
+          up for a good conversation about AI, behavioral science, and
+          building things that serve people and society.
+        </p>
+        <div class="skill-list" style="margin-top:24px;justify-content:center">
+          <span class="chip">Berkeley, CA</span>
+          <span class="chip">MIMS '26</span>
+          <span class="chip">Open to collaboration on projects &amp; research</span>
+        </div>
+        <div style="margin-top:28px">
+          <button type="button" class="btn btn-primary btn-lg" data-drawer-open="contact">Send a message</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- community cross-link CTA -->
+    <section class="wrap section">
+      <div class="reveal">
+        <div class="cutout-card cta-banner m-blush">
+          <div class="cta-banner__inner">
+            <span class="eyebrow">Community</span>
+            <h2 style="margin-top:16px">Building with AI, for good?</h2>
+            <p>If your note is about the community, the application form has a few questions that help me prepare for our first chat.</p>
+            <div style="margin-top:24px">
+              <a href="community.html#apply" class="btn btn-primary btn-lg">Apply to join</a>
+            </div>
+          </div>
+          <a href="community.html" class="cutout" aria-label="Explore the community">
+            <svg class="fillet fillet--top" viewBox="0 0 32 32" aria-hidden="true"><path d="M32 32V0C32 17.6731 17.6731 32 0 32H32Z"/></svg>
+            <svg class="fillet fillet--left" viewBox="0 0 32 32" aria-hidden="true"><path d="M32 32V0C32 17.6731 17.6731 32 0 32H32Z"/></svg>
+            <span class="cutout__pill">Learn more
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== contact drawer ===== -->
+  <div class="drawer-backdrop" data-drawer-backdrop aria-hidden="true"></div>
+  <aside class="drawer" data-drawer="contact" role="dialog" aria-modal="true" aria-labelledby="contact-drawer-title" aria-hidden="true">
+    <div class="drawer__head">
+      <span class="eyebrow" id="contact-drawer-title">Contact</span>
+      <button type="button" class="drawer__close" data-drawer-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="drawer__body">
+      <h2 style="font-size:1.6rem;margin-bottom:20px">Send a message.</h2>
+      <form class="form" data-sheet="Contact" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="c-name">Name</label>
+            <input id="c-name" name="name" type="text" required autocomplete="name" />
+            <span class="error"></span>
+          </div>
+          <div class="field">
+            <label for="c-email">Email</label>
+            <input id="c-email" name="email" type="email" required autocomplete="email" />
+            <span class="error"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="c-subject">Subject</label>
+          <select id="c-subject" name="subject" required>
+            <option value="">Select…</option>
+            <option>Project collaboration</option>
+            <option>Research collaboration</option>
+            <option>Community question</option>
+            <option>Job opportunity</option>
+            <option>Just saying hello</option>
+          </select>
+          <span class="error"></span>
+        </div>
+        <div class="field">
+          <label for="c-message">Message</label>
+          <textarea id="c-message" name="message" required placeholder="What's on your mind?"></textarea>
+          <span class="error"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <button type="submit" class="btn btn-primary">Send message</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </div>
+        <p class="muted" style="font-size:12px;margin-top:4px">
+          Protected by reCAPTCHA. The Google
+          <a href="https://policies.google.com/privacy" rel="noopener" style="text-decoration:underline">Privacy Policy</a> and
+          <a href="https://policies.google.com/terms" rel="noopener" style="text-decoration:underline">Terms of Service</a> apply.
+        </p>
+      </form>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+        <p class="footer-note">AI Product Engineer · Berkeley, CA</p>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/andrewakuaku" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

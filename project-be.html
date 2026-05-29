@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>be (betrothy) | Andrew Akuaku</title>
+  <meta name="description" content="be (betrothy): a LinkedIn-style social network for the wedding industry, with creative studios for designing rings, dresses, and music. Built as an AI engineer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html" class="active">Portfolio</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="community.html#apply" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" style="padding-top:32px">
+      <a href="portfolio.html" class="back-link">← All projects</a>
+    </div>
+
+    <section class="project-hero wrap">
+      <div class="reveal">
+        <span class="eyebrow">Project</span>
+        <h1 class="project-title">be · betrothy</h1>
+        <p class="lead">
+          A LinkedIn-style social network for the wedding industry. Couples,
+          planners, vendors, and guests in one place, with creative studios
+          for designing rings, dresses, and music.
+        </p>
+      </div>
+
+      <div class="project-meta reveal">
+        <div>
+          <span class="project-meta__label">Role</span>
+          <span class="project-meta__value">AI Engineer</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Type</span>
+          <span class="project-meta__value">Personal project</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Year</span>
+          <span class="project-meta__value">2025–2026</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Stack</span>
+          <span class="project-meta__value">Next.js · FastAPI · Three.js · PostgreSQL</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <div class="project-hero-image reveal" style="aspect-ratio:auto">
+        <img src="assets/projects/be-music.png" alt="be Music studio: a custom in-browser music studio with a gradient player card playing 'Our song · for Adaeze · tap to unmute'." style="height:auto" />
+      </div>
+      <p class="muted" style="font-size:13px;margin-top:10px;text-align:center">
+        Music studio: design the song you've been hearing in your head.
+      </p>
+    </section>
+
+    <section class="wrap section project-content">
+      <div class="reveal">
+        <h2>About this project</h2>
+        <p>
+          be (working name: <em>betrothy</em>) is a wedding platform with
+          one simple goal: make weddings cheaper and easier so more couples
+          can have one. It brings couples, planners, vendors, and guests
+          into one place, so you don't have to use a dozen separate apps,
+          hire an expensive planner, or spend a year on logistics.
+        </p>
+        <p>
+          be has built-in design tools for the parts of a wedding most
+          people care about. You can design your ring in a 3D editor, your
+          dress or suit in the Dress studio, and your song in the Music
+          studio. Each one runs in the browser, so you can try things and
+          change your mind before spending money on anything.
+        </p>
+        <p>
+          I worked on be as an AI engineer. I helped build the creative
+          tools, the social graph (how people find and connect with each
+          other), and the AI helpers that match couples with vendors and
+          suggest ideas. The frontend is Next.js 15 with React, TypeScript,
+          Tailwind, and Radix UI. The backend is FastAPI with SQLAlchemy
+          and JWT auth, with PostgreSQL 16 running in Docker. The 3D
+          studios use Three.js, and the music studio has a small custom
+          audio player.
+        </p>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-top:16px;padding-bottom:80px">
+      <div class="next-project reveal">
+        <span class="eyebrow">Next project</span>
+        <a href="project-drewq.html"><h3>DREWQ →</h3></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+        <p class="footer-note">AI Product Engineer · Berkeley, CA</p>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/andrewakuaku" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

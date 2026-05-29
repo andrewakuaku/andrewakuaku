@@ -1,0 +1,1066 @@
+/* ============================================================
+   Andrew Akuaku portfolio
+   Design language adapted from the "be" landing page:
+   the inverted-corner cutout card (a pill CTA notched into a
+   card corner with two fillet SVGs bridging the edges).
+   Palette & type adapted from ElevenLabs: near-monochrome colors,
+   grotesque sans (Space Grotesk), gradient + film-grain surfaces.
+   ============================================================ */
+
+:root {
+  /* ElevenLabs-style near-monochrome palette: pure-white page & surfaces,
+     near-black ink, neutral grays, and a black "accent". */
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --ink: #0a0a0a;
+  --ink-muted: #6b6b6b;
+  --line: #dcdbd5;
+
+  --accent: #0a0a0a;       /* near-black (buttons, labels, marks) */
+  --accent-deep: #000000;
+  --accent-light: #f0efea;
+  --accent-ink: #ffffff;
+
+  --radius: 20px;
+  --radius-sm: 12px;
+  --maxw: 1200px;
+  --shadow: 0 1px 2px rgba(21, 23, 28, 0.04), 0 12px 32px -12px rgba(21, 23, 28, 0.12);
+
+  /* Film-grain noise texture (ElevenLabs-style). A grayscale fractal-noise SVG,
+     tiled and blended over gradients via background-blend-mode / mix-blend-mode. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* Iridescent "orb" meshes from the ElevenLabs palette: soft radial color
+     blooms over a tinted base. Light/medium pastels, so they pair with dark
+     ink text. --mesh is the default (sunset); the rest are variations applied
+     via .m-* modifier classes. */
+  --mesh: var(--mesh-sunset);
+  --mesh-sunset:
+    radial-gradient(120% 120% at 18% 22%, #f0906f 0%, transparent 55%),
+    radial-gradient(120% 120% at 85% 20%, #aac4dd 0%, transparent 55%),
+    radial-gradient(130% 120% at 60% 105%, #f7bc8c 0%, transparent 55%),
+    linear-gradient(160deg, #ef9a7c 0%, #e87559 100%);
+  --mesh-violet:
+    radial-gradient(120% 120% at 30% 15%, #9b96d8 0%, transparent 60%),
+    radial-gradient(120% 120% at 82% 92%, #f5ae80 0%, transparent 55%),
+    linear-gradient(160deg, #8983c9 0%, #f2b990 100%);
+  --mesh-sage:
+    radial-gradient(120% 120% at 72% 22%, #8c9c64 0%, transparent 55%),
+    radial-gradient(120% 120% at 18% 42%, #aec6dc 0%, transparent 50%),
+    radial-gradient(120% 120% at 82% 102%, #f1aa70 0%, transparent 55%),
+    linear-gradient(160deg, #9caa77 0%, #d99a64 100%);
+  --mesh-blush:
+    radial-gradient(120% 120% at 25% 25%, #f0d7de 0%, transparent 60%),
+    radial-gradient(120% 120% at 80% 82%, #e5d3e1 0%, transparent 55%),
+    linear-gradient(160deg, #f1e3e9 0%, #e9d3d0 100%);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* No bounce / rubber-band at the top or bottom of the page, and no
+     scroll chaining out of overflowed children (e.g. the drawer body). */
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+h1, h2, h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+.font-display { font-family: "Space Grotesk", system-ui, sans-serif; }
+.accent { color: var(--accent); }
+.muted { color: var(--ink-muted); }
+
+/* ---------- layout ---------- */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+/* Longhand padding so .wrap's `0 24px` horizontal padding isn't wiped by the
+   shorthand, keeping every section's content aligned with the header content. */
+.section { padding-top: 80px; padding-bottom: 80px; }
+.section-sm { padding-top: 48px; padding-bottom: 48px; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.25rem); color: var(--ink-muted); max-width: 56ch; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn:active { transform: translateY(1px); }
+/* Gradient + grain fill (grain blended over the gradient via background-blend-mode). */
+.btn-primary {
+  color: var(--accent-ink);
+  background-color: var(--accent);
+  background-image: var(--grain), linear-gradient(135deg, #2c2c2c 0%, #141414 50%, #000 100%);
+  background-size: 140px 140px, auto;
+  background-blend-mode: soft-light, normal;
+}
+.btn-primary:hover {
+  background-image: var(--grain), linear-gradient(135deg, #1a1a1a 0%, #050505 50%, #000 100%);
+}
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-lg { padding: 15px 28px; font-size: 16px; }
+
+/* ---------- header / nav ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+  transition: transform 0.3s ease;
+}
+/* Slides out of view when scrolling down; JS toggles this class. */
+.site-header.is-hidden {
+  transform: translateY(-100%);
+}
+.nav {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.brand .dot { color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-size: 15px; color: var(--ink-muted); transition: color 0.15s ease; }
+.nav-links a:hover, .nav-links a.active { color: var(--ink); }
+/* Header "Work with me" button uses the ElevenLabs iridescent mesh (+ grain)
+   instead of the solid black fill; dark ink text reads on the light gradient. */
+.nav-links a.btn-primary,
+.nav-links a.btn-primary:hover {
+  color: var(--ink);
+  background-color: transparent;
+  background-image: var(--grain), var(--mesh);
+  background-size: 120px 120px, auto;
+  background-blend-mode: soft-light, normal;
+  padding: 8px 16px;
+}
+.nav-toggle { display: none; background: none; border: 0; cursor: pointer; padding: 8px; }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--ink); margin: 4px 0; transition: 0.2s; }
+
+/* ============================================================
+   CUTOUT CARD: the signature element.
+   A card whose CTA pill sits flush in a corner; the pill's
+   panel is filled with the *page* color (--paper) and two
+   fillet SVGs bridge its edges so the notch reads as one
+   smooth concave cutout carved out of the card.
+   ============================================================ */
+.cutout-card {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: visible;          /* let the fillet SVGs sit outside the panel */
+  background: var(--surface);
+}
+/* clip media/background to the rounded corners without clipping the cutout */
+.cutout-card__media {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.cutout-card__media img,
+.cutout-card__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Film-grain over the photo, so image cards share the gradient cards' texture. */
+.cutout-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.cutout-card__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(21, 23, 28, 0.78), rgba(21, 23, 28, 0.1) 55%, transparent);
+}
+
+/* Variant: media holds a .browser-frame instead of a bare photo.
+   The frame sits flush at the top with a soft warm wash behind, and the
+   screenshot inside the frame is cropped to its top so the dashboard
+   header and stat row stay visible above the card's title scrim. */
+.cutout-card__media--framed {
+  background: linear-gradient(180deg, #f7f3ee 0%, #ece5da 100%);
+  padding: 20px 20px 0;
+}
+.cutout-card__media--framed::after { opacity: 0.18; }
+.cutout-card__media--framed .browser-frame {
+  box-shadow: 0 18px 40px -18px rgba(21, 23, 28, 0.35);
+}
+.cutout-card__media--framed .browser-frame__body {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.cutout-card__media--framed .browser-frame__body img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+/* Same padded look for cards that hold a bare photo (no browser chrome).
+   The image is anchored to the bottom of the wash too — without that, a
+   16:10 box only fills the top of the card and the strip of bare wash
+   underneath reads as extra padding compared to the browser-frame cards
+   (whose chrome bar pushes the visual height further down). */
+.cutout-card__media--framed > img {
+  position: absolute;
+  inset: 20px 20px 0 20px;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 18px 40px -18px rgba(21, 23, 28, 0.35);
+}
+
+/* the cutout link, pinned to the bottom-right corner */
+.cutout {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  background: var(--paper);
+  /* Only the *inner* corner is rounded. The outer (bottom-right) corner is
+     left square on purpose: the panel is filled with the page color, so a
+     square outer corner overfills past the card's rounded corner invisibly,
+     while the card's own rounded background/media never bleeds a dark sliver
+     into the corner. (This is how `be` kills the line at the cutout corner.) */
+  border-top-left-radius: 1.25rem;
+  border-bottom-right-radius: 0;
+  padding: 6px;
+}
+.cutout__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 10px 16px 10px 20px;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: background 0.15s ease;
+}
+.cutout:hover .cutout__pill { background: var(--accent-deep); }
+.cutout__pill svg { transition: transform 0.15s ease; }
+.cutout:hover .cutout__pill svg { transform: translate(2px, -2px); }
+
+/* the two fillets that smooth the notch into the card */
+.fillet { position: absolute; width: 20px; height: 20px; fill: var(--paper); }
+.fillet--top  { top: -20px; right: 0; }
+.fillet--left { bottom: 0; left: -20px; }
+
+/* top-left variant (used on the hero showcase card) */
+.cutout--tl {
+  top: 0; left: 0; bottom: auto; right: auto;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 1.25rem;
+}
+.cutout--tl .fillet--top  { top: auto; bottom: -20px; left: 0; right: auto; transform: rotate(180deg); }
+.cutout--tl .fillet--left { bottom: auto; top: 0; right: -20px; left: auto; transform: rotate(180deg); }
+
+/* ---------- hero ---------- */
+.hero {
+  /* Longhand so .wrap's `0 24px` horizontal padding survives. */
+  padding-top: 56px;
+  padding-bottom: 32px;
+  min-height: calc(100vh - 64px); /* fill the viewport below the 64px header */
+  display: flex;
+  flex-direction: column;
+}
+/* Hero-grid takes all the space above the stats and vertically centers its
+   contents (heading column and showcase card). Stats stay at the bottom. */
+.hero .hero-grid { flex: 1; }
+.hero .stats { padding-top: 56px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: center;
+}
+.hero h1 { font-size: clamp(2.6rem, 6vw, 4.6rem); }
+.hero .lead { margin-top: 20px; }
+.hero-cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* hero showcase = a tall cutout card with an image + caption.
+   Lighter scrim than the default so more of the photo shows through; caption
+   text stays readable because it's bottom-aligned where the gradient is densest. */
+.showcase .cutout-card__scrim {
+  background: linear-gradient(to top, rgba(21, 23, 28, 0.5), rgba(21, 23, 28, 0.05) 55%, transparent);
+}
+.showcase {
+  min-height: 460px;
+  background-color: var(--accent-deep);
+  background-image: var(--grain), var(--mesh);
+  background-size: 160px 160px, auto;
+  background-blend-mode: soft-light, normal;
+}
+.showcase__caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 28px;
+  color: #fff;
+}
+.showcase__caption h3 { font-size: 1.7rem; }
+.showcase__caption p { color: rgba(255, 255, 255, 0.82); font-size: 14px; margin-top: 6px; }
+
+/* ---------- stats strip ---------- */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* Stat cards use the ElevenLabs mesh + grain (different colors per card,
+   assigned via .m-* modifier classes in the markup). */
+.stat {
+  position: relative;
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  color: var(--ink);
+  background-color: var(--accent-light);
+  background-image: var(--grain), var(--mesh);
+  background-size: 140px 140px, auto;
+  background-blend-mode: soft-light, normal;
+}
+.stat b { font-family: "Space Grotesk", system-ui, sans-serif; font-size: 2rem; display: block; }
+.stat span { font-size: 14px; color: var(--ink); opacity: 1; }
+
+/* ---------- section heads ---------- */
+.section-head { max-width: 640px; margin-bottom: 40px; }
+.section-head h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); margin-top: 14px; }
+.section-head p { margin-top: 14px; }
+
+/* ---------- project / generic card grid ---------- */
+.grid { display: grid; gap: 24px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+.project-card { min-height: 320px; }
+.project-card .cutout-card__scrim { background: linear-gradient(to top, rgba(21,23,28,0.82), transparent 60%); }
+/* Logo-style card: brand mark on a clean background instead of a photo.
+   Use `class="cutout-card__media is-logo"` to opt in; pair with
+   `class="project-card is-logo-card"` so the scrim doesn't darken the logo. */
+.cutout-card__media.is-logo {
+  background: #f1efe8; /* warm off-white that matches --accent-light */
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+.cutout-card__media.is-logo img {
+  width: auto;
+  max-width: 70%;
+  max-height: 60%;
+  height: auto;
+  object-fit: contain;
+  filter: none;
+}
+.cutout-card__media.is-logo::after { display: none; } /* hide film-grain over logo */
+.project-card.is-logo-card .cutout-card__scrim { display: none; }
+.project-card.is-logo-card .meta { color: var(--ink); }
+.project-card.is-logo-card .meta p { color: var(--ink-muted); }
+.project-card.is-logo-card .tag { background: rgba(0,0,0,0.06); color: var(--ink); }
+.project-card .meta {
+  position: absolute; inset-inline: 0; bottom: 0; z-index: 2; padding: 24px; color: #fff;
+}
+.project-card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tag {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  background: rgba(255,255,255,0.16); color: #fff; padding: 4px 9px; border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+.project-card h3 { font-size: 1.4rem; }
+.project-card .meta p { color: rgba(255,255,255,0.82); font-size: 14px; margin-top: 6px; max-width: 42ch; }
+
+/* plain content card (no media) */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+.card .icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--accent-light); color: var(--accent); margin-bottom: 16px;
+}
+.card h3 { font-size: 1.25rem; }
+.card p { margin-top: 8px; color: var(--ink-muted); font-size: 15px; }
+
+/* "How it works" cards: mesh + grain (different color per card). */
+#how .card {
+  background-color: var(--accent-light);
+  background-image: var(--grain), var(--mesh);
+  background-size: 140px 140px, auto;
+  background-blend-mode: soft-light, normal;
+  border: 0;
+  color: var(--ink);
+}
+#how .card:nth-child(2) { background-image: var(--grain), var(--mesh-violet); }
+#how .card:nth-child(3) { background-image: var(--grain), var(--mesh-sage); }
+#how .card .icon {
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--ink);
+}
+#how .card p { color: var(--ink); opacity: 1; }
+
+/* ---------- feature / about split ---------- */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.skill-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.chip { background: var(--surface); border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; font-size: 14px; }
+
+/* ---------- pricing / tiers ---------- */
+.tier {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px;
+  position: relative;
+  /* Flex column so the trailing button can stick to the bottom regardless
+     of how many bullets each tier has. */
+  display: flex;
+  flex-direction: column;
+}
+/* Pin the tier's CTA to the bottom of the card. */
+.tier > a.btn { margin-top: auto; }
+/* Featured tier (Growth) carries the ElevenLabs mesh + grain. */
+.tier.featured {
+  border: 0;
+  box-shadow: var(--shadow);
+  background-color: var(--accent-light);
+  background-image: var(--grain), var(--mesh);
+  background-size: 140px 140px, auto;
+  background-blend-mode: soft-light, normal;
+}
+.tier.featured,
+.tier.featured h3,
+.tier.featured .price,
+.tier.featured .price span,
+.tier.featured p,
+.tier.featured p.muted,
+.tier.featured li { color: var(--ink); opacity: 1; }
+.tier .price { font-family: "Space Grotesk", system-ui, sans-serif; font-size: 2.4rem; margin: 12px 0; }
+.tier .price span { font-size: 14px; font-family: "Inter"; color: var(--ink-muted); }
+.tier ul { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 10px; }
+.tier li { display: flex; gap: 10px; font-size: 15px; color: var(--ink-muted); }
+.tier li svg { color: var(--accent); flex: none; margin-top: 3px; }
+
+/* ---------- big CTA cutout banner ---------- */
+.cta-banner {
+  position: relative;
+  min-height: 360px;
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  background-image: var(--grain), var(--mesh);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
+  color: var(--ink); /* pastel meshes are light, so text is dark ink */
+  display: flex;
+  align-items: center;
+}
+/* Mesh variations (ElevenLabs-style). Default .cta-banner uses --mesh (sunset). */
+.m-violet { background-image: var(--grain), var(--mesh-violet); }
+.m-sage   { background-image: var(--grain), var(--mesh-sage); }
+.m-blush  { background-image: var(--grain), var(--mesh-blush); }
+.cta-banner__inner { padding: 56px; max-width: 560px; }
+.cta-banner h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+.cta-banner p { margin-top: 14px; color: var(--ink); opacity: 1; }
+
+/* ---------- forms ---------- */
+.form { display: grid; gap: 16px; }
+/* Drop the side-by-side row layout: fields always stack so labels and
+   inputs stay full-width in narrow drawers. The .row wrapper is invisible
+   to layout via `display: contents`, so its children become direct grid
+   items of the form's single-column flow (no HTML change needed). */
+.form .row { display: contents; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 15px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field textarea { resize: vertical; min-height: 120px; }
+/* Custom chevron for selects: hide the inconsistent native arrow and paint a
+   chevron (in --ink-muted) as a background SVG, leaving room on the right. */
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235c6573' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+.field .error { color: #b42318; font-size: 12px; min-height: 0; }
+.form-status { font-size: 14px; min-height: 22px; }
+.form-status.ok { color: #067647; }
+.form-status.bad { color: #b42318; }
+
+.form-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 32px; }
+
+/* ---------- right-side application drawer ----------
+   A panel that slides in from the right with breathing room around it
+   (24px from the viewport edges). Backdrop dims the page; ESC / backdrop
+   click / close button all dismiss it. */
+/* Backdrop is invisible: it only exists to catch click-outside to close. */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 100;
+  pointer-events: none;
+}
+.drawer-backdrop.is-open { pointer-events: auto; }
+
+.drawer {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  bottom: 24px;
+  width: min(480px, calc(100vw - 48px));
+  z-index: 101;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateX(calc(100% + 48px));
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.drawer.is-open { transform: translateX(0); }
+
+.drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.drawer__close {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.drawer__close:hover { border-color: var(--ink); background: var(--accent-light); }
+
+.drawer__body { padding: 24px; overflow-y: auto; flex: 1; }
+
+/* When the drawer is open, prevent body scroll behind it. */
+body.is-locked { overflow: hidden; }
+
+@media (max-width: 600px) {
+  .drawer { top: 12px; right: 12px; bottom: 12px; width: calc(100vw - 24px); }
+}
+
+/* ---------- browser frame (Chrome-style window for product demos) ----------
+   A flat, accurate Chrome window in pure CSS: rounded card, top bar with
+   macOS traffic-light dots on the left, a centered URL pill, and a body
+   that holds the screenshot. Reusable: drop any image into .browser-frame__body. */
+.browser-frame {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.browser-frame__bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 14px;
+  background: #f3f3f1;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+}
+.browser-frame__dots { display: flex; gap: 8px; }
+.browser-frame__dots span {
+  width: 12px; height: 12px; border-radius: 50%;
+  display: block;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.15);
+}
+.browser-frame__dots span:nth-child(1) { background: #ff5f57; }
+.browser-frame__dots span:nth-child(2) { background: #febc2e; }
+.browser-frame__dots span:nth-child(3) { background: #28c840; }
+.browser-frame__url {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 460px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  color: #5c6573;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browser-frame__url svg { flex: none; opacity: 0.7; }
+.browser-frame__url b { color: var(--ink); font-weight: 500; }
+.browser-frame__body { background: #fff; }
+.browser-frame__body img { display: block; width: 100%; height: auto; }
+
+/* Inline supporting image on project detail pages — wide banner with a
+   small caption underneath. Used for the mural photo on the Mural page. */
+.project-banner {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f3f0eb;
+}
+.project-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.project-banner figcaption {
+  padding: 12px 16px 14px;
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-align: center;
+}
+.project-banner figcaption a { text-decoration: underline; }
+
+/* Processing IDE mock used as the banner on the Tangible UI page.
+   Window chrome + toolbar + tab + a code editor with line numbers + a
+   dark console strip and a status footer. Hand-tokenised syntax classes
+   below (.c comment, .t type, .f function, .n number) keep it framework-
+   free. */
+.processing-ide {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #f7f4ec;            /* Processing's pale cream editor field */
+  font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  color: #1f2328;
+  box-shadow: 0 1px 2px rgba(21, 23, 28, 0.04), 0 18px 40px -18px rgba(21, 23, 28, 0.18);
+}
+.processing-ide__chrome {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 14px;
+  background: #e9e4d6;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.10);
+}
+.processing-ide__dots { display: flex; gap: 8px; }
+.processing-ide__dots span {
+  width: 12px; height: 12px; border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.15);
+}
+.processing-ide__dots span:nth-child(1) { background: #ff5f57; }
+.processing-ide__dots span:nth-child(2) { background: #febc2e; }
+.processing-ide__dots span:nth-child(3) { background: #28c840; }
+.processing-ide__title {
+  justify-self: center;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  color: #5c5848;
+  letter-spacing: 0.02em;
+}
+.processing-ide__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #efeadb;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+}
+.processing-ide__btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  background: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: default;
+}
+.processing-ide__btn--run { background: #3a7d4b; color: #fff; border-color: #2f6740; }
+.processing-ide__btn--stop { color: #5c5848; }
+.processing-ide__spacer { flex: 1; }
+.processing-ide__mode {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5c5848;
+  padding: 4px 10px;
+  border: 1px solid rgba(10, 10, 10, 0.18);
+  border-radius: 6px;
+  background: #fff;
+}
+.processing-ide__tab {
+  display: inline-block;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1f2328;
+  background: #f7f4ec;
+  padding: 8px 18px;
+  border-right: 1px solid rgba(10, 10, 10, 0.08);
+  border-bottom: 1px solid transparent;
+}
+.processing-ide__editor {
+  margin: 0;
+  padding: 14px 18px;
+  background: #f7f4ec;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.10);
+}
+.processing-ide__editor .ln {
+  color: #b6ad95;
+  user-select: none;
+  margin-right: 12px;
+}
+.processing-ide__editor .c { color: #8a8772; font-style: italic; }
+.processing-ide__editor .t { color: #006b8f; }
+.processing-ide__editor .f { color: #006b8f; }
+.processing-ide__editor .n { color: #2c8c3a; }
+.processing-ide__console {
+  background: #1d1d1b;
+  color: #d8d4c4;
+  font-size: 12.5px;
+  padding: 10px 18px;
+  min-height: 38px;
+}
+.processing-ide__console-prompt { color: #7faf6a; margin-right: 8px; }
+.processing-ide__status {
+  display: flex;
+  justify-content: space-between;
+  background: #e9e4d6;
+  color: #5c5848;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11.5px;
+  padding: 6px 14px;
+  border-top: 1px solid rgba(10, 10, 10, 0.08);
+}
+
+/* Three-up clip grid below the IDE on the Tangible UI page. The clips
+   are portrait iPhone shots, so the tiles share a 9/16 aspect ratio. */
+.project-clips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.project-clips__item {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0a0a0a;
+  border: 1px solid var(--line);
+}
+.project-clips__item video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: #0a0a0a;
+}
+.project-clips__item figcaption {
+  padding: 10px 14px 12px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  background: #ffffff;
+  text-align: center;
+}
+@media (max-width: 720px) {
+  .project-clips { grid-template-columns: 1fr; }
+  .project-clips__item video { aspect-ratio: 16 / 10; }
+}
+
+/* Inline product demo video used on project detail pages. */
+.project-video {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+}
+.project-video video { display: block; width: 100%; height: auto; }
+
+
+/* LinkedIn post embed on project detail pages. */
+.linkedin-embed {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.linkedin-embed__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+}
+.linkedin-embed__head svg { color: #0a66c2; }
+.linkedin-embed iframe {
+  display: block;
+  width: 100%;
+  height: 720px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+/* ---------- project detail page ---------- */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink-muted);
+  transition: color 0.15s ease;
+}
+.back-link:hover { color: var(--ink); }
+
+/* Longhand so .wrap's horizontal padding (0 24px) isn't wiped by shorthand. */
+.project-hero { padding-top: 32px; padding-bottom: 48px; }
+.project-title {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  margin-top: 14px;
+  line-height: 1.05;
+}
+.project-hero .lead { margin-top: 20px; max-width: 60ch; }
+
+.project-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.project-meta > div { display: flex; flex-direction: column; gap: 6px; }
+.project-meta__label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+.project-meta__value {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.project-hero-image {
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: var(--accent-light);
+  position: relative;
+}
+.project-hero-image img { width: 100%; height: 100%; object-fit: cover; }
+.project-hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.project-content {
+  /* Fills the .wrap and re-asserts the 24px horizontal padding that the
+     .section class strips via its `padding: 80px 0` shorthand, so the
+     prose aligns with the header content edges. Top/bottom tightened to
+     close the gaps to the image above and the divider below. */
+  padding: 32px 24px 24px;
+  display: grid;
+  gap: 48px;
+}
+.project-content h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 14px;
+}
+.project-content p {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.7;
+}
+.project-content p + p { margin-top: 16px; }
+
+.next-project {
+  border-top: 1px solid var(--line);
+  padding-top: 40px;
+  /* Eyebrow label on the left, project link on the right, on one line. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.next-project a { display: inline-block; }
+.next-project h3 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-top: 0;
+  transition: color 0.15s ease;
+}
+.next-project a:hover h3 { color: var(--accent); }
+
+@media (max-width: 800px) {
+  .project-meta { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- affiliations marquee ----------
+   Auto-scrolling row of institution logos. The track holds two copies of the
+   logo list and slides -50% so the loop is seamless. Mask fades the edges. */
+.affiliations { background: var(--accent-light); }
+.affiliations .section-head { max-width: none; text-align: center; margin-bottom: 32px; }
+
+/* Splide marquee: mask-fade edges + grayscale logos with color on hover.
+   Motion is driven by Splide's Auto-Scroll extension at a constant pixel
+   rate (so no slide-transition state to stall, no easing to pulse). */
+.logo-marquee {
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+}
+.logo-marquee .splide__list { padding: 0; margin: 0; list-style: none; }
+.logo-marquee .splide__slide {
+  display: flex;
+  align-items: center;
+}
+.logo-marquee img {
+  height: 80px;
+  width: auto;
+  max-width: 280px;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.7;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.logo-marquee img:hover { opacity: 1; filter: grayscale(0); }
+@media (max-width: 640px) {
+  .logo-marquee img { height: 56px; max-width: 200px; }
+}
+
+/* Hide the floating reCAPTCHA v3 badge: Google permits this as long as
+   the protection notice with links to Privacy / Terms is shown in the
+   form area (which it is, below every form's submit button). */
+.grecaptcha-badge { visibility: hidden !important; }
+
+/* ---------- footer ---------- */
+.site-footer { border-top: 1px solid var(--line); padding: 48px 0; margin-top: 40px; }
+.footer-grid { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.footer-grid .socials { display: flex; gap: 18px; }
+.footer-grid .socials a { color: var(--ink-muted); }
+.footer-grid .socials a:hover { color: var(--ink); }
+.footer-note { color: var(--ink-muted); font-size: 14px; }
+
+/* ---------- reveal animation ---------- */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .hero-grid, .split, .grid-3, .grid-2, .stats { grid-template-columns: 1fr; }
+  /* padding-block so the inline 24px from .wrap survives — using shorthand
+     here zeroes out left/right padding because .hero shares the element
+     with .wrap. Same trick on .section below. */
+  .hero { padding-block: 32px 16px; }
+  .nav-links {
+    position: absolute; top: 64px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding: 8px 24px 16px; display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .nav-links a:last-of-type { border-bottom: 0; }
+  .nav-links .btn { margin-top: 12px; justify-content: center; }
+  .nav-toggle { display: block; }
+  .cta-banner__inner { padding: 36px 28px; }
+  .section { padding-block: 56px; }
+}

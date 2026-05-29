@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tangible User Interfaces | Andrew Akuaku</title>
+  <meta name="description" content="Tangible User Interfaces: a class at UC Berkeley's School of Information where I explored building physical-digital experiences with Arduino, C++, and Processing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html" class="active">Portfolio</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="community.html#apply" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" style="padding-top:32px">
+      <a href="portfolio.html" class="back-link">← All projects</a>
+    </div>
+
+    <section class="project-hero wrap">
+      <div class="reveal">
+        <span class="eyebrow">Class</span>
+        <h1 class="project-title">Tangible User Interfaces</h1>
+        <p class="lead">
+          A class at UC Berkeley's School of Information where I got to
+          build with Arduino, C++, and Processing, and learn how
+          physical inputs change the feel of a digital system.
+        </p>
+      </div>
+
+      <div class="project-meta reveal">
+        <div>
+          <span class="project-meta__label">Role</span>
+          <span class="project-meta__value">Student</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Organization</span>
+          <span class="project-meta__value">UC Berkeley I-School</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Year</span>
+          <span class="project-meta__value">2025</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Tools</span>
+          <span class="project-meta__value">Arduino · C++ · Processing</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <figure class="processing-ide reveal" role="img" aria-label="The Processing IDE with the rotatePushPop example open: a cream code editor, a green Run button in the toolbar, line numbers down the left, and a dark console along the bottom.">
+        <div class="processing-ide__chrome">
+          <div class="processing-ide__dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="processing-ide__title">rotatePushPop | Processing 4.3</div>
+          <span aria-hidden="true" style="width:60px"></span>
+        </div>
+        <div class="processing-ide__toolbar">
+          <button class="processing-ide__btn processing-ide__btn--run" type="button" aria-label="Run">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="processing-ide__btn processing-ide__btn--stop" type="button" aria-label="Stop">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12"/></svg>
+          </button>
+          <span class="processing-ide__spacer"></span>
+          <span class="processing-ide__mode">Java</span>
+        </div>
+        <div class="processing-ide__tab">rotatePushPop</div>
+        <pre class="processing-ide__editor" aria-hidden="true"><code><span class="ln"> 1</span> <span class="c">// Rotate Push Pop. Demonstrates the use of pushMatrix()</span>
+<span class="ln"> 2</span> <span class="c">// and popMatrix() to save and restore the coordinate system.</span>
+<span class="ln"> 3</span>
+<span class="ln"> 4</span> <span class="t">float</span> a = <span class="n">0.0</span>;
+<span class="ln"> 5</span> <span class="t">float</span> ang1, ang2, ang3, ang4;
+<span class="ln"> 6</span>
+<span class="ln"> 7</span> <span class="t">void</span> <span class="f">setup</span>() {
+<span class="ln"> 8</span>   <span class="f">size</span>(<span class="n">640</span>, <span class="n">360</span>);
+<span class="ln"> 9</span>   <span class="f">fill</span>(<span class="n">255</span>);
+<span class="ln">10</span>   <span class="f">noStroke</span>();
+<span class="ln">11</span> }
+<span class="ln">12</span>
+<span class="ln">13</span> <span class="t">void</span> <span class="f">draw</span>() {
+<span class="ln">14</span>   <span class="f">background</span>(<span class="n">0</span>);
+<span class="ln">15</span>   a += <span class="n">0.01</span>;
+<span class="ln">16</span>   ang1 = <span class="f">cos</span>(a);
+<span class="ln">17</span>   ang2 = <span class="f">cos</span>(a*<span class="n">2</span>);
+<span class="ln">18</span>   ang3 = <span class="f">cos</span>(a*<span class="n">3</span>);
+<span class="ln">19</span>   ang4 = <span class="f">cos</span>(a*<span class="n">4</span>);
+<span class="ln">20</span>
+<span class="ln">21</span>   <span class="f">pushMatrix</span>();
+<span class="ln">22</span>   <span class="f">translate</span>(width/<span class="n">2</span>, height/<span class="n">2</span>);
+<span class="ln">23</span>   <span class="f">rotate</span>(ang1);
+<span class="ln">24</span>   <span class="f">rect</span>(<span class="n">0</span>, <span class="n">0</span>, <span class="n">240</span>, <span class="n">40</span>);
+<span class="ln">25</span>   <span class="f">translate</span>(<span class="n">120</span>, <span class="n">0</span>);
+<span class="ln">26</span>   <span class="f">rotate</span>(ang2);
+<span class="ln">27</span>   <span class="f">rect</span>(<span class="n">0</span>, <span class="n">0</span>, <span class="n">120</span>, <span class="n">30</span>);
+<span class="ln">28</span>   <span class="f">popMatrix</span>();
+<span class="ln">29</span> }</code></pre>
+        <div class="processing-ide__console" aria-hidden="true">
+          <span class="processing-ide__console-prompt">›</span> Sketch running…
+        </div>
+        <div class="processing-ide__status" aria-hidden="true">
+          <span>15:7</span><span>Java</span>
+        </div>
+      </figure>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <div class="project-clips reveal" aria-label="Three short clips from class: an Arduino on a breadboard driving a Processing sketch on the laptop next to it.">
+        <figure class="project-clips__item">
+          <video
+            src="assets/projects/hcl/clip-1.mp4"
+            poster="assets/projects/hcl/clip-1.jpg"
+            playsinline muted loop preload="metadata" controls
+          ></video>
+          <figcaption>A potentiometer turns the circle's size in the sketch.</figcaption>
+        </figure>
+        <figure class="project-clips__item">
+          <video
+            src="assets/projects/hcl/clip-2.mp4"
+            poster="assets/projects/hcl/clip-2.jpg"
+            playsinline muted loop preload="metadata" controls
+          ></video>
+          <figcaption>A photoresistor in my palm dims and brightens the sketch.</figcaption>
+        </figure>
+        <figure class="project-clips__item">
+          <video
+            src="assets/projects/hcl/clip-3.mp4"
+            poster="assets/projects/hcl/clip-3.jpg"
+            playsinline muted loop preload="metadata" controls
+          ></video>
+          <figcaption>A piezo speaker turns Processing audio into a glowing pattern.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="wrap project-content section">
+      <div class="reveal">
+        <h2>About this class</h2>
+        <p>
+          Tangible User Interfaces was a class at UC Berkeley's School of
+          Information about designing interactions that live in the
+          physical world: things you press, twist, tap, and feel, with a
+          screen reacting in real time. It was my chance to step away from
+          the browser for a semester and build with my hands.
+        </p>
+        <p>
+          Most weeks we built a small experiment. I wired sensors and
+          actuators into Arduino boards, wrote the firmware in C++, and
+          had the board stream events over serial to a Processing sketch
+          on a laptop that drew the response on screen. By the end I had
+          a small collection of these little physical-digital toys, and a
+          much better feel for what tangible inputs do to a system that's
+          otherwise just pixels.
+        </p>
+        <p>
+          <a href="https://medium.com/@andrewakuaku_34437/output-piezo-speakers-397a1958f893" rel="noopener" target="_blank" style="text-decoration:underline">Read one of the writeups on Medium →</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-top:16px;padding-bottom:80px">
+      <div class="next-project reveal">
+        <span class="eyebrow">Next project</span>
+        <a href="project-be.html"><h3>be · betrothy →</h3></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+        <p class="footer-note">AI Product Engineer · Berkeley, CA</p>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/andrewakuaku" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

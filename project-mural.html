@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mural Recognition App | Andrew Akuaku</title>
+  <meta name="description" content="A scan-to-learn app for the 150 Years of Women at UC Berkeley installation. Built with Next.js, OpenCV, and PostgreSQL." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="portfolio.html" class="active">Portfolio</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="community.html#apply" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" style="padding-top:32px">
+      <a href="portfolio.html" class="back-link">← All projects</a>
+    </div>
+
+    <section class="project-hero wrap">
+      <div class="reveal">
+        <span class="eyebrow">Project</span>
+        <h1 class="project-title">Mural Recognition App</h1>
+        <p class="lead">
+          A scan-to-learn app for the "150 Years of Women at UC Berkeley"
+          installation: 41 portraits, full biographies on tap.
+        </p>
+      </div>
+
+      <div class="project-meta reveal">
+        <div>
+          <span class="project-meta__label">Role</span>
+          <span class="project-meta__value">Product Manager & Developer</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Organization</span>
+          <span class="project-meta__value">UC Berkeley</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Year</span>
+          <span class="project-meta__value">2025–2026</span>
+        </div>
+        <div>
+          <span class="project-meta__label">Stack</span>
+          <span class="project-meta__value">Next.js · OpenCV · PostgreSQL</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <div class="browser-frame reveal" role="img" aria-label="Berkeley Mural app landing page: 'Point your camera at the mural to discover alumni stories' and a four-step How it works guide.">
+        <div class="browser-frame__bar">
+          <div class="browser-frame__dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="browser-frame__url">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span><b>berkeleymural.app</b></span>
+          </div>
+          <span style="width:52px" aria-hidden="true"></span>
+        </div>
+        <div class="browser-frame__body">
+          <img src="assets/projects/mural-landing.png" alt="Berkeley Mural app landing page with a How it works guide and a Start Scanning call to action." />
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:16px">
+      <figure class="project-banner reveal">
+        <img src="assets/projects/mural-hero.png" alt="The '150 Years of Women at UC Berkeley' mural by Twin Walls Mural Company: 41 portraits of alumnae, faculty, and friends of the university." />
+        <figcaption>
+          The mural the app is built around. Designed by
+          <a href="https://www.twinwallsmuralcompany.com/" target="_blank" rel="noopener">Twin Walls Mural Company</a>
+          (2020–2022) for UC Berkeley's "150 Years of Women" commemoration.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap section project-content">
+      <div class="reveal">
+        <h2>About this project</h2>
+        <p>
+          The <em>150 Years of Women at UC Berkeley</em> mural lives in the
+          Undergraduate Academic Building and celebrates 41 distinguished
+          women whose work, scholarship, and activism have shaped the
+          university: Jennifer Doudna, June Jordan, Maxine Hong
+          Kingston, Julia Morgan, Beverly Cleary, Alice Waters, Barbara Lee,
+          and Judith Butler, alongside alumnae, faculty, friends of the
+          university, and staff. The mural was designed by
+          <a href="https://www.twinwallsmuralcompany.com/" target="_blank" rel="noopener" style="text-decoration:underline">Twin Walls Mural Company</a>
+          (2020–2022) and is the centerpiece of UC Berkeley's "150 Years of
+          Women" commemoration.
+        </p>
+        <p>
+          I collaborated with Professor Oliver O'Reilly, Vice Provost for
+          Undergraduate Education, and a cross-functional team to design and
+          ship the companion app: a scan-to-learn experience that lets
+          passersby photograph the mural and instantly access annotations
+          and full biographies for each of the 41 women portrayed. The goal
+          was simple: turn a static work of public art into an interactive
+          companion piece that travels with the visitor.
+        </p>
+        <p>
+          I defined the product scope and the end-to-end user experience,
+          then built the computer-vision pipeline in OpenCV for image
+          processing and portrait recognition, and the full-stack app in
+          Next.js with PostgreSQL for serving biographies, citations, and
+          context in real time. The result is a quiet, low-friction layer
+          on top of the installation: point your phone, see the story.
+        </p>
+        <p style="margin-top:8px">
+          <a href="https://ue.berkeley.edu/projects-initiatives/guide-150-years-women-uc-berkeley-mural" target="_blank" rel="noopener" style="text-decoration:underline">Read the official UC Berkeley project page →</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-top:16px;padding-bottom:80px">
+      <div class="next-project reveal">
+        <span class="eyebrow">Next project</span>
+        <a href="project-baobab.html"><h3>ASU Baobab chat redesign →</h3></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html">Andrew Akuaku<span class="dot">.</span></a>
+        <p class="footer-note">AI Product Engineer · Berkeley, CA</p>
+      </div>
+      <div class="socials">
+        <a href="https://github.com/andrewakuaku" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
