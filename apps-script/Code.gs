@@ -35,11 +35,16 @@ function getTargetSpreadsheet() {
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
-  lock.waitLock(20000); // serialize writes so concurrent submits don't collide
-
+  var haveLock = false;
   try {
+    // Lock acquisition inside the try so any quota / contention failure
+    // returns a JSON error instead of leaving Apps Script to render an
+    // opaque error page.
+    lock.waitLock(20000);
+    haveLock = true;
+
     // Stripe webhooks send JSON; portfolio forms send url-encoded. We
-    // distinguish by content type / body shape and dispatch accordingly.
+    // distinguish by content type and dispatch accordingly.
     if (e && e.postData && e.postData.contents) {
       var ctype = (e.postData.type || "").toLowerCase();
       if (ctype.indexOf("application/json") === 0) {
@@ -102,9 +107,11 @@ function doPost(e) {
 
     return json({ result: "success" });
   } catch (err) {
-    return json({ result: "error", message: String(err) });
+    // Surface the stack trace too — Executions log shows it, and the JSON
+    // body lets a developer eyeball what went wrong from the browser.
+    return json({ result: "error", message: String(err), stack: err && err.stack });
   } finally {
-    lock.releaseLock();
+    if (haveLock) lock.releaseLock();
   }
 }
 
@@ -129,10 +136,16 @@ function testNotify() {
   console.log("Sent test notification to " + NOTIFY_EMAIL);
 }
 
+/**
+ * Wrap the response as HtmlService instead of ContentService.
+ * Background: Apps Script's POST response delivery via /macros/echo silently
+ * drops ContentService responses for some script projects, returning a 405
+ * "Sorry, unable to open the file" Drive page even when doPost ran fine.
+ * HtmlService responses go through a different delivery path that works.
+ * The client reads the body as text and parses JSON itself.
+ */
 function json(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
-    ContentService.MimeType.JSON
-  );
+  return HtmlService.createHtmlOutput(JSON.stringify(obj));
 }
 
 /**

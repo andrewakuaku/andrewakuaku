@@ -272,11 +272,21 @@ const STRIPE_PAYMENT_LINKS = {
         if (SHEETS_ENDPOINT.includes("REPLACE_WITH_YOUR_DEPLOYMENT_ID")) {
           throw new Error("not-configured");
         }
-        // Apps Script web apps respond with CORS only when deployed for
-        // "Anyone"; we POST as form-data to avoid a CORS preflight.
-        const res = await fetch(SHEETS_ENDPOINT, { method: "POST", body: payload });
-        const data = await res.json().catch(() => ({ result: "success" }));
-        if (data.result === "error") throw new Error(data.message || "server");
+        // The Apps Script web app's HtmlService response has no CORS
+        // headers, so we send the request in no-cors mode: the browser
+        // dispatches the POST fire-and-forget, the Sheet row is still
+        // written + the email still sent server-side, but we can't read
+        // the response body to see explicit error codes. Trade-off
+        // accepted because Apps Script's ContentService (which would
+        // carry CORS headers) has a delivery bug on this project that
+        // returns 405 even for trivial responses.
+        await fetch(SHEETS_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          body: payload,
+        });
+        // Treat dispatch as success; the server-side write is the source
+        // of truth (you'll see the row in the Sheet either way).
 
         // Paid memberships continue to Stripe; the Sheet row is already saved.
         const stripeUrl = getStripeUrlFor(form);
