@@ -284,6 +284,10 @@ img { display: block; max-width: 100%; }
   border-top-left-radius: 1.25rem;
   border-bottom-right-radius: 0;
   padding: 6px;
+  /* Extend the panel's --paper bg by 1px to the left and up so high-DPR
+     mobile screens don't render a sub-pixel seam between the cutout panel
+     and the two fillet SVGs that bridge into the card body. */
+  box-shadow: -1px 0 0 var(--paper), 0 -1px 0 var(--paper);
 }
 .cutout__pill {
   display: inline-flex;
