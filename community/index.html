@@ -108,27 +108,25 @@
       <div class="section-head reveal">
         <span class="eyebrow">Membership</span>
         <h2>Join the community.</h2>
-        <p class="muted">Small monthly membership fees keep the community sustainable. The application is free and there's no obligation.</p>
+        <p class="muted">Three tiers based on where you are. The application is free and there's no obligation.</p>
       </div>
 
       <div class="grid grid-3">
         <div class="tier reveal">
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Students</h3>
-          <div class="price">Free<span>current students</span></div>
-          <p class="muted" style="font-size:14px">Learn, build, and access mentors.</p>
+          <p class="muted" style="font-size:14px;margin-top:6px">Learn, build, and access mentors.</p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Access to mentors in the community</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Learning paths and shared resources</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Participate in discussions and events</li>
           </ul>
-          <a href="#apply" class="btn btn-ghost" data-membership="Students: Free" style="width:100%;justify-content:center">Join as Student</a>
+          <a href="#apply" class="btn btn-ghost" data-membership="Students" style="width:100%;justify-content:center">Join as Student</a>
         </div>
 
         <div class="tier featured reveal">
           <span class="eyebrow" style="position:absolute;top:-12px;left:30px">Most popular</span>
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Graduates</h3>
-          <div class="price">$15<span>/month</span></div>
-          <p class="muted" style="font-size:14px">Meet with stakeholders and help shape the community.</p>
+          <p class="muted" style="font-size:14px;margin-top:6px">Meet with stakeholders and help shape the community.</p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Everything in Students</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Access to community research and active projects</li>
@@ -136,13 +134,12 @@
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Help shape community direction and initiatives</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Co-lead working groups</li>
           </ul>
-          <a href="#apply" class="btn btn-primary" data-membership="Graduates: $15/mo" style="width:100%;justify-content:center">Join as Graduate</a>
+          <a href="#apply" class="btn btn-primary" data-membership="Graduates" style="width:100%;justify-content:center">Join as Graduate</a>
         </div>
 
         <div class="tier reveal">
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Professionals</h3>
-          <div class="price">$25<span>/month</span></div>
-          <p class="muted" style="font-size:14px">Steward the community's direction.</p>
+          <p class="muted" style="font-size:14px;margin-top:6px">Steward the community's direction.</p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Everything in Graduates</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Set community strategy and standards</li>
@@ -150,7 +147,7 @@
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approve new members and partnerships</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Lead governance and strategic decisions</li>
           </ul>
-          <a href="#apply" class="btn btn-ghost" data-membership="Professionals: $25/mo" style="width:100%;justify-content:center">Join as Professional</a>
+          <a href="#apply" class="btn btn-ghost" data-membership="Professionals" style="width:100%;justify-content:center">Join as Professional</a>
         </div>
       </div>
     </section>
@@ -211,12 +208,12 @@
         </div>
 
         <div class="field">
-          <label for="m-plan">Membership you're interested in</label>
+          <label for="m-plan">Tier you're interested in</label>
           <select id="m-plan" name="membership" required>
             <option value="">Select…</option>
-            <option>Students: Free</option>
-            <option>Graduates: $15/mo</option>
-            <option>Professionals: $25/mo</option>
+            <option>Students</option>
+            <option>Graduates</option>
+            <option>Professionals</option>
             <option>Not sure yet</option>
           </select>
           <span class="error"></span>
@@ -238,9 +235,6 @@
           <button type="submit" class="btn btn-primary">Submit application</button>
           <p class="form-status" role="status" aria-live="polite"></p>
         </div>
-        <p class="muted" style="font-size:13px;margin-top:4px">
-          Paid memberships continue to secure checkout (Stripe) after submission.
-        </p>
         <p class="muted" style="font-size:12px;margin-top:4px">
           Protected by reCAPTCHA. The Google
           <a href="https://policies.google.com/privacy" rel="noopener" style="text-decoration:underline">Privacy Policy</a> and

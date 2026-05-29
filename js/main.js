@@ -225,21 +225,6 @@ async function getRecaptchaToken(action) {
   }
 }
 
-/* ============================================================
-   STRIPE PAYMENT LINKS
-   Paid tiers redirect to a Stripe Payment Link after the
-   application submits successfully. Create the links in the
-   Stripe dashboard (Products → Pricing → "Create payment link"
-   for each recurring price) and paste the URLs below. The
-   `client_reference_id` query param ties the Stripe checkout
-   back to the application email in your Sheet.
-   ============================================================ */
-const STRIPE_PAYMENT_LINKS = {
-  "Graduates: $15/mo":     "https://buy.stripe.com/REPLACE_WITH_GRADUATES_LINK",
-  "Professionals: $25/mo": "https://buy.stripe.com/REPLACE_WITH_PROFESSIONALS_LINK",
-  // "Students: Free" intentionally absent: free tier doesn't redirect.
-};
-
 (function () {
   const forms = document.querySelectorAll("form[data-sheet]");
 
@@ -288,19 +273,6 @@ const STRIPE_PAYMENT_LINKS = {
         // Treat dispatch as success; the server-side write is the source
         // of truth (you'll see the row in the Sheet either way).
 
-        // Paid memberships continue to Stripe; the Sheet row is already saved.
-        const stripeUrl = getStripeUrlFor(form);
-        if (stripeUrl) {
-          setStatus(status, "Application received, redirecting to payment…", "ok");
-          if (submitBtn) submitBtn.textContent = "Redirecting…";
-          // Pass the applicant's email so the Stripe checkout pre-fills it
-          // and ties back to the Sheet row.
-          const email = encodeURIComponent(payload.get("email") || "");
-          const sep = stripeUrl.includes("?") ? "&" : "?";
-          window.location.href = `${stripeUrl}${sep}prefilled_email=${email}&client_reference_id=${email}`;
-          return;
-        }
-
         form.reset();
         setStatus(status, "Thanks! Your message is on its way. I'll be in touch soon.", "ok");
       } catch (err) {
@@ -321,17 +293,6 @@ const STRIPE_PAYMENT_LINKS = {
       }
     });
   });
-
-  // Look up the Stripe Payment Link URL for the membership selected on
-  // this form, if any. Returns null for free tiers or non-membership forms.
-  function getStripeUrlFor(form) {
-    const membership = form.querySelector('select[name="membership"]');
-    if (!membership || !membership.value) return null;
-    const url = STRIPE_PAYMENT_LINKS[membership.value];
-    if (!url) return null;
-    if (url.includes("REPLACE_WITH")) return null; // not configured yet
-    return url;
-  }
 
   function validate(form) {
     let ok = true;

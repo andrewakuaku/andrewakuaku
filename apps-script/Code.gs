@@ -43,15 +43,6 @@ function doPost(e) {
     lock.waitLock(20000);
     haveLock = true;
 
-    // Stripe webhooks send JSON; portfolio forms send url-encoded. We
-    // distinguish by content type and dispatch accordingly.
-    if (e && e.postData && e.postData.contents) {
-      var ctype = (e.postData.type || "").toLowerCase();
-      if (ctype.indexOf("application/json") === 0) {
-        return handleStripeEvent(e.postData.contents);
-      }
-    }
-
     var params = (e && e.parameter) ? e.parameter : {};
 
     // ---- reCAPTCHA v3 verification ----
@@ -158,15 +149,12 @@ function notify(sheetName, fields, params, rowNumber) {
   var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL") || NOTIFY_EMAIL;
   if (!to) return;
 
-  // For paid memberships the subject calls out the tier so I know to
-  // expect a Stripe payment too; everything else uses the sheet name.
+  // Community applications surface the tier in the subject so I know
+  // at a glance which one they picked; everything else uses sheet name.
   var subject;
-  var membership = params.membership ? String(params.membership) : "";
-  var tier = membership.split(":")[0].trim(); // "Graduates: $25/mo" → "Graduates"
-  if (membership && membership.toLowerCase().indexOf("free") === -1) {
-    subject = "[Portfolio] New " + tier + " application";
-  } else if (membership) {
-    subject = "[Portfolio] New " + tier + " application (free tier)";
+  var membership = params.membership ? String(params.membership).trim() : "";
+  if (membership) {
+    subject = "[Portfolio] New " + membership + " application";
   } else {
     subject = "[Portfolio] New " + sheetName + " submission";
   }
@@ -218,115 +206,6 @@ function humanise(key) {
     .replace(/[_-]+/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/^./, function (c) { return c.toUpperCase(); });
-}
-
-/**
- * Handles incoming Stripe webhook events. We can't read request headers
- * in Apps Script, so we can't verify the Stripe-Signature directly.
- * Instead we re-fetch the session from the Stripe API using the secret
- * key — if the session exists and is paid, the event is genuine.
- *
- * Requires Script Properties:
- *   STRIPE_SECRET_KEY  (sk_test_… or sk_live_…)
- */
-function handleStripeEvent(bodyText) {
-  var event;
-  try { event = JSON.parse(bodyText); } catch (err) {
-    return json({ result: "error", message: "invalid-json" });
-  }
-  if (!event || event.type !== "checkout.session.completed") {
-    // Acknowledge unrelated events with 200 so Stripe stops retrying.
-    return json({ result: "ignored", type: event && event.type });
-  }
-
-  var sessionId = event.data && event.data.object && event.data.object.id;
-  if (!sessionId) return json({ result: "error", message: "no-session-id" });
-
-  var verified = fetchStripeSession(sessionId);
-  if (!verified.ok) {
-    return json({ result: "error", message: "verify-failed", reason: verified.reason });
-  }
-  var session = verified.session;
-  if (session.payment_status !== "paid") {
-    return json({ result: "ignored", reason: "not-paid", status: session.payment_status });
-  }
-
-  // Match the application row by client_reference_id (we set this to the
-  // applicant's email when redirecting to Stripe), falling back to the
-  // customer_email Stripe captured at checkout.
-  var matchEmail = (session.client_reference_id || session.customer_email || "").toLowerCase();
-  if (!matchEmail) return json({ result: "error", message: "no-match-email" });
-
-  var stamped = stampPaid(matchEmail, session);
-  return json({ result: "success", stamped: stamped });
-}
-
-function fetchStripeSession(sessionId) {
-  var key = PropertiesService.getScriptProperties().getProperty("STRIPE_SECRET_KEY");
-  if (!key) return { ok: false, reason: "no-secret-key" };
-  var resp;
-  try {
-    resp = UrlFetchApp.fetch("https://api.stripe.com/v1/checkout/sessions/" + encodeURIComponent(sessionId), {
-      method: "get",
-      headers: { Authorization: "Bearer " + key },
-      muteHttpExceptions: true,
-    });
-  } catch (err) {
-    return { ok: false, reason: "fetch-failed" };
-  }
-  if (resp.getResponseCode() !== 200) {
-    return { ok: false, reason: "stripe-" + resp.getResponseCode() };
-  }
-  try {
-    return { ok: true, session: JSON.parse(resp.getContentText()) };
-  } catch (err) {
-    return { ok: false, reason: "stripe-bad-json" };
-  }
-}
-
-/**
- * Find the most recent application row whose email matches and stamp a
- * `paidAt` (and `stripeSessionId`) column. Adds the columns if they
- * don't exist yet. Returns true if a row was updated, false otherwise.
- */
-function stampPaid(email, session) {
-  var ss = getTargetSpreadsheet();
-  // Search every sheet; the applicant's row could be in Contact, Mentorship,
-  // or whatever future sheetName the form uses.
-  var sheets = ss.getSheets();
-  for (var i = 0; i < sheets.length; i++) {
-    var sheet = sheets[i];
-    var lastRow = sheet.getLastRow();
-    var lastCol = sheet.getLastColumn();
-    if (lastRow < 2 || lastCol < 1) continue;
-
-    var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-    var emailCol = headers.indexOf("email") + 1;
-    if (!emailCol) continue; // sheet doesn't track email
-
-    var emails = sheet.getRange(2, emailCol, lastRow - 1, 1).getValues();
-    // Walk bottom-up so we update the most recent application first.
-    for (var r = emails.length - 1; r >= 0; r--) {
-      if (String(emails[r][0]).trim().toLowerCase() !== email) continue;
-
-      var paidAtCol = ensureColumn(sheet, headers, "paidAt");
-      var sessionCol = ensureColumn(sheet, headers, "stripeSessionId");
-      var rowNumber = r + 2;
-      sheet.getRange(rowNumber, paidAtCol).setValue(new Date());
-      sheet.getRange(rowNumber, sessionCol).setValue(session.id);
-      return true;
-    }
-  }
-  return false;
-}
-
-function ensureColumn(sheet, headers, name) {
-  var idx = headers.indexOf(name);
-  if (idx !== -1) return idx + 1;
-  var col = headers.length + 1;
-  sheet.getRange(1, col).setValue(name).setFontWeight("bold");
-  headers.push(name); // keep the cached headers in sync
-  return col;
 }
 
 /**
