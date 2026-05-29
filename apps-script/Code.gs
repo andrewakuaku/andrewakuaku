@@ -59,10 +59,6 @@ function doPost(e) {
     // verification is skipped so the form keeps working in development.
     var captcha = verifyRecaptcha(params.recaptchaToken);
     if (!captcha.ok) {
-      // Capture the rejection to a sheet so it's debuggable even when the
-      // Executions panel won't expand. Safe to remove once the captcha
-      // setup is stable.
-      try { logCaptchaReject(captcha, params); } catch (_) {}
       return json({ result: "error", message: "captcha-failed", reason: captcha.reason, score: captcha.score });
     }
     delete params.recaptchaToken; // don't store the token in the sheet
@@ -118,9 +114,7 @@ function doPost(e) {
 
     return json({ result: "success" });
   } catch (err) {
-    // Surface the stack trace too. Executions log shows it, and the JSON
-    // body lets a developer eyeball what went wrong from the browser.
-    return json({ result: "error", message: String(err), stack: err && err.stack });
+    return json({ result: "error", message: String(err) });
   } finally {
     if (haveLock) lock.releaseLock();
   }
@@ -264,17 +258,14 @@ function addStatusValidation(sheet, statusCol) {
  * "I toggled but nothing happened" symptoms.
  */
 function onEditApproval(e) {
-  if (!e || !e.range) {
-    console.log("onEditApproval: no edit event payload"); return;
-  }
+  if (!e || !e.range) return;
   var sheet = e.range.getSheet();
   var col = e.range.getColumn();
   var row = e.range.getRow();
-  console.log("onEditApproval: edit on '" + sheet.getName() + "' row=" + row + " col=" + col + " value=" + e.value);
-  if (row < 2) { console.log("  → header row, ignoring"); return; }
+  if (row < 2) return; // header row
 
   var lastCol = sheet.getLastColumn();
-  if (lastCol < 1) { console.log("  → empty sheet, ignoring"); return; }
+  if (lastCol < 1) return;
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
 
   // Tolerate alternative spellings: "Status", "approval", etc.
@@ -283,34 +274,25 @@ function onEditApproval(e) {
     var h = String(headers[i] || "").toLowerCase().trim();
     if (h === "status" || h === "approval") { statusCol = i + 1; break; }
   }
-  if (!statusCol) { console.log("  → no status/approval column found in headers: " + headers.join(",")); return; }
-  if (col !== statusCol) { console.log("  → edit was outside the status column (status is col " + statusCol + ")"); return; }
+  if (!statusCol || col !== statusCol) return; // edit was elsewhere
 
   // e.value is unset for multi-cell pastes; fall back to reading the cell.
   var newValue = String(e.value || sheet.getRange(row, col).getValue() || "").trim();
-  if (newValue.toLowerCase() !== STATUS_APPROVED.toLowerCase() &&
-      newValue.toLowerCase() !== STATUS_REJECTED.toLowerCase()) {
-    console.log("  → value '" + newValue + "' is not Approved/Rejected, ignoring");
-    return;
-  }
-  // Normalise capitalisation so the email branches reliably.
-  var status = newValue.toLowerCase() === STATUS_APPROVED.toLowerCase()
-    ? STATUS_APPROVED : STATUS_REJECTED;
+  var lc = newValue.toLowerCase();
+  if (lc !== STATUS_APPROVED.toLowerCase() && lc !== STATUS_REJECTED.toLowerCase()) return;
+  var status = lc === STATUS_APPROVED.toLowerCase() ? STATUS_APPROVED : STATUS_REJECTED;
 
   var values = sheet.getRange(row, 1, 1, lastCol).getValues()[0];
   var rowObj = {};
   headers.forEach(function (h, idx) { rowObj[h] = values[idx]; });
 
   var email = String(rowObj.email || rowObj.emailAddress || "").trim();
-  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    console.log("  → no valid email on row (got '" + email + "')"); return;
-  }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
 
   try {
     sendStatusEmail(email, status, rowObj);
-    console.log("  ✓ sent " + status + " email to " + email);
   } catch (err) {
-    console.warn("  ✗ MailApp.sendEmail failed: " + err);
+    console.warn("status email failed: " + err);
   }
 }
 
@@ -382,48 +364,6 @@ function sendStatusEmail(email, status, rowObj) {
 }
 
 /**
- * One-time migration: repurpose the now-unused `level` column as the
- * `linkedin` column. If a separate `linkedin` column already exists
- * (auto-added by recent submissions), copies its non-empty values into
- * the renamed column and deletes the duplicate. Run this once from the
- * editor; safe to re-run (becomes a no-op once migration is done).
- */
-function migrateLevelToLinkedin() {
-  var ss = getTargetSpreadsheet();
-  var sheet = ss.getSheetByName("Community");
-  if (!sheet) { console.log("No 'Community' sheet found."); return; }
-
-  var lastCol = sheet.getLastColumn();
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  var levelCol = headers.indexOf("level") + 1;
-  var linkedinCol = headers.indexOf("linkedin") + 1;
-
-  if (!levelCol) { console.log("No 'level' column. nothing to migrate."); return; }
-
-  // Rename `level` → `linkedin` in place.
-  sheet.getRange(1, levelCol).setValue("linkedin");
-  console.log("Renamed column " + levelCol + " from 'level' to 'linkedin'.");
-
-  // If a separate `linkedin` column existed, fold its values into the
-  // renamed column (bottom-most non-empty value wins per row), then drop it.
-  if (linkedinCol && linkedinCol !== levelCol) {
-    var lastRow = sheet.getLastRow();
-    if (lastRow >= 2) {
-      var src = sheet.getRange(2, linkedinCol, lastRow - 1, 1).getValues();
-      var dst = sheet.getRange(2, levelCol, lastRow - 1, 1).getValues();
-      for (var i = 0; i < src.length; i++) {
-        if (src[i][0] && !dst[i][0]) dst[i][0] = src[i][0];
-      }
-      sheet.getRange(2, levelCol, dst.length, 1).setValues(dst);
-    }
-    sheet.deleteColumn(linkedinCol);
-    console.log("Folded duplicate 'linkedin' column (was " + linkedinCol + ") into the renamed one and removed it.");
-  } else {
-    console.log("No duplicate 'linkedin' column to merge.");
-  }
-}
-
-/**
  * One-time setup: install the spreadsheet-bound onEdit trigger so
  * onEditApproval runs whenever a cell in the target sheet is edited.
  * Skips creation if a trigger for this handler already exists, so it's
@@ -451,39 +391,11 @@ function installApprovalTrigger() {
  * Returns { ok, reason?, score? }. Skips verification gracefully if no
  * secret is configured (returns ok = true so dev/test flows still pass).
  */
-/**
- * Append a row to a `_debug` sheet capturing why a submission was rejected
- * by reCAPTCHA. Lets us see the siteverify response (hostname, error-codes,
- * score) without expanding Apps Script's Executions log.
- */
-function logCaptchaReject(captcha, params) {
-  var ss = getTargetSpreadsheet();
-  var sheet = ss.getSheetByName("_debug") || ss.insertSheet("_debug");
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["at", "reason", "score", "errorCodes", "formName", "email", "tokenSent"]);
-    sheet.getRange(1, 1, 1, 7).setFontWeight("bold");
-  }
-  sheet.appendRow([
-    new Date(),
-    captcha.reason || "",
-    captcha.score != null ? captcha.score : "",
-    captcha.codes ? captcha.codes.join(",") : "",
-    params.formName || "",
-    params.email || "",
-    params.recaptchaToken ? "yes" : "no",
-  ]);
-}
 
 function verifyRecaptcha(token) {
   var secret = PropertiesService.getScriptProperties().getProperty("RECAPTCHA_SECRET");
-  if (!secret) {
-    console.log("verifyRecaptcha: no secret configured, skipping");
-    return { ok: true, reason: "no-secret-configured" };
-  }
-  if (!token) {
-    console.log("verifyRecaptcha: no token in submission");
-    return { ok: false, reason: "missing-token" };
-  }
+  if (!secret) return { ok: true, reason: "no-secret-configured" };
+  if (!token) return { ok: false, reason: "missing-token" };
 
   var response;
   try {
@@ -493,18 +405,12 @@ function verifyRecaptcha(token) {
       muteHttpExceptions: true,
     });
   } catch (err) {
-    console.log("verifyRecaptcha: siteverify fetch failed: " + err);
     return { ok: false, reason: "fetch-failed" };
   }
 
-  var raw = response.getContentText();
   var data = {};
-  try { data = JSON.parse(raw); } catch (_) {}
-  // Log the full siteverify response so the cause (error-codes, hostname,
-  // score) is visible in Executions without guessing.
-  console.log("verifyRecaptcha: siteverify response = " + raw);
-
-  if (!data.success) return { ok: false, reason: "rejected", score: data.score, codes: data["error-codes"] };
+  try { data = JSON.parse(response.getContentText()); } catch (_) {}
+  if (!data.success) return { ok: false, reason: "rejected", codes: data["error-codes"] };
   if (typeof data.score === "number" && data.score < 0.5) {
     return { ok: false, reason: "low-score", score: data.score };
   }
