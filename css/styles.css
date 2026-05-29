@@ -252,7 +252,7 @@ img { display: block; max-width: 100%; }
   object-position: top left;
 }
 /* Same padded look for cards that hold a bare photo (no browser chrome).
-   The image is anchored to the bottom of the wash too — without that, a
+   The image is anchored to the bottom of the wash too. without that, a
    16:10 box only fills the top of the card and the strip of bare wash
    underneath reads as extra padding compared to the browser-frame cards
    (whose chrome bar pushes the visual height further down). */
@@ -684,7 +684,7 @@ body.is-locked { overflow: hidden; }
 .browser-frame__body { background: #fff; }
 .browser-frame__body img { display: block; width: 100%; height: auto; }
 
-/* Inline supporting image on project detail pages — wide banner with a
+/* Inline supporting image on project detail pages. wide banner with a
    small caption underneath. Used for the mural photo on the Mural page. */
 .project-banner {
   margin: 0;
@@ -1050,7 +1050,7 @@ body.is-locked { overflow: hidden; }
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
   .hero-grid, .split, .grid-3, .grid-2, .stats { grid-template-columns: 1fr; }
-  /* padding-block so the inline 24px from .wrap survives — using shorthand
+  /* padding-block so the inline 24px from .wrap survives. using shorthand
      here zeroes out left/right padding because .hero shares the element
      with .wrap. Same trick on .section below. */
   .hero { padding-block: 32px 16px; }

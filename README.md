@@ -1,6 +1,6 @@
-# Andrew Akuaku — Portfolio
+# Andrew Akuaku. Portfolio
 
-A static portfolio site in plain **HTML, CSS, and JavaScript** — no build step, no framework. Forms are wired to a **Google Apps Script** backend that writes to a Sheet and emails me on submit.
+A static portfolio site in plain **HTML, CSS, and JavaScript**. no build step, no framework. Forms are wired to a **Google Apps Script** backend that writes to a Sheet and emails me on submit.
 
 ---
 
@@ -14,7 +14,7 @@ A static portfolio site in plain **HTML, CSS, and JavaScript** — no build step
    - [Optional: edit code locally with clasp](#optional-edit-code-locally-with-clasp)
 5. [Spam protection (reCAPTCHA v3)](#spam-protection-recaptcha-v3)
 6. [Deploying the site](#deploying-the-site)
-7. [Sensitive data — what's where](#sensitive-data--whats-where)
+7. [Sensitive data. what's where](#sensitive-data--whats-where)
 
 ---
 
@@ -36,7 +36,7 @@ A static portfolio site in plain **HTML, CSS, and JavaScript** — no build step
 ├── apps-script/
 │   ├── Code.gs              # form handler (server-side)
 │   ├── appsscript.json      # Apps Script manifest
-│   └── .clasp.json.example  # template — copy to .clasp.json, paste scriptId
+│   └── .clasp.json.example  # template. copy to .clasp.json, paste scriptId
 └── README.md
 ```
 
@@ -49,25 +49,25 @@ python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-The forms will hit the live Apps Script endpoint configured in `js/main.js → SHEETS_ENDPOINT` — so submissions from `localhost` write to the same Sheet as production. If you'd rather not pollute the real Sheet during development, point the constant at a separate test deployment.
+The forms will hit the live Apps Script endpoint configured in `js/main.js → SHEETS_ENDPOINT`. so submissions from `localhost` write to the same Sheet as production. If you'd rather not pollute the real Sheet during development, point the constant at a separate test deployment.
 
 ## How the forms work
 
 Two forms talk to one Apps Script Web App:
 
-- **Contact** (`contact.html` drawer) — `data-sheet="Contact"` writes to a `Contact` tab.
-- **Community application** (`community.html` drawer) — `data-sheet="Community"` writes to a `Community` tab.
+- **Contact** (`contact.html` drawer). `data-sheet="Contact"` writes to a `Contact` tab.
+- **Community application** (`community.html` drawer). `data-sheet="Community"` writes to a `Community` tab.
 
 Both forms `POST` `multipart/form-data` to the `/exec` URL. Apps Script:
 
 1. Verifies the **reCAPTCHA v3** token against Google's siteverify API (skipped silently if no secret is configured).
 2. Picks (or creates) a tab named after the `formName` field.
-3. Auto-maintains the header row from the field names — adding new columns as new fields appear.
+3. Auto-maintains the header row from the field names. adding new columns as new fields appear.
 4. Appends the submission as a new row.
 5. Emails a human-readable summary to `NOTIFY_EMAIL`, with `Reply-To` set to the visitor's email so I can reply directly from Gmail.
 6. Returns `{"result":"success"}` (or `{"result":"error", "message": "…"}`).
 
-All three community tiers (Students, Graduates, Professionals) submit the same way — there's no payment step. The tier just goes into the Sheet row so I know which one the applicant picked.
+All three community tiers (Students, Graduates, Professionals) submit the same way. there's no payment step. The tier just goes into the Sheet row so I know which one the applicant picked.
 
 ## Apps Script backend setup
 
@@ -75,7 +75,7 @@ Everything below assumes you (or whoever's deploying) is the script owner. The d
 
 ### One-time: bind a Sheet and configure properties
 
-1. **Create the Sheet** at <https://sheets.new>. Name it anything (e.g. *Portfolio submissions*). Copy its ID from the URL — it's the long string between `/d/` and `/edit`.
+1. **Create the Sheet** at <https://sheets.new>. Name it anything (e.g. *Portfolio submissions*). Copy its ID from the URL. it's the long string between `/d/` and `/edit`.
 2. **Create the script project** at <https://script.google.com> → *New project*. Paste `apps-script/Code.gs` and `apps-script/appsscript.json` from this repo, or use `clasp push` (see below).
 3. **Deploy as a Web app**: *Deploy → New deployment → Web app*.
    - *Execute as*: **Me**
@@ -86,7 +86,7 @@ Everything below assumes you (or whoever's deploying) is the script owner. The d
 
    | Property             | Value                                                                                  | Required for                          |
    |----------------------|----------------------------------------------------------------------------------------|---------------------------------------|
-   | `SHEET_ID`           | The bare ID, or the full Sheet URL — the script extracts the ID either way.            | All form writes                       |
+   | `SHEET_ID`           | The bare ID, or the full Sheet URL. the script extracts the ID either way.            | All form writes                       |
    | `NOTIFY_EMAIL`       | Where notifications go (e.g. your gmail).                                              | Email-on-submit                       |
    | `RECAPTCHA_SECRET`   | reCAPTCHA v3 *secret* key from <https://www.google.com/recaptcha/admin>.               | Spam protection (skipped if missing)  |
 
@@ -119,19 +119,19 @@ clasp redeploy <DEPLOYMENT_ID> -d "what changed"
 # same /exec URL stays live; visitors don't need to do anything
 ```
 
-`.clasp.json` is gitignored — the scriptId stays local.
+`.clasp.json` is gitignored. the scriptId stays local.
 
 ## Spam protection (reCAPTCHA v3)
 
 The forms use **invisible reCAPTCHA v3** (score-based). On submit, `js/main.js` requests a token and ships it as `recaptchaToken`. Apps Script verifies it against `siteverify` with the secret, and rejects scores under 0.5 server-side.
 
-The **site key** is hardcoded in `js/main.js` — it's public by design. The **secret key** lives only in Apps Script as the `RECAPTCHA_SECRET` Script Property. If that property isn't set, verification is skipped and the form still works (useful for local dev).
+The **site key** is hardcoded in `js/main.js`. it's public by design. The **secret key** lives only in Apps Script as the `RECAPTCHA_SECRET` Script Property. If that property isn't set, verification is skipped and the form still works (useful for local dev).
 
 To use your own keys, generate a v3 pair at <https://www.google.com/recaptcha/admin>, swap the site key in `js/main.js`, and set the secret as the Script Property.
 
 ## Deploying the site
 
-Any static host works — GitHub Pages, Netlify, Vercel, Cloudflare Pages. For GitHub Pages:
+Any static host works. GitHub Pages, Netlify, Vercel, Cloudflare Pages. For GitHub Pages:
 
 1. Push this repo to GitHub.
 2. *Settings → Pages → Build and deployment: Deploy from a branch → main / root → Save.*
@@ -139,19 +139,19 @@ Any static host works — GitHub Pages, Netlify, Vercel, Cloudflare Pages. For G
 
 Every push to `main` redeploys automatically.
 
-## Sensitive data — what's where
+## Sensitive data. what's where
 
 Public (safe to commit, served to every visitor anyway):
 
-- `js/main.js` — `RECAPTCHA_SITE_KEY`, `SHEETS_ENDPOINT`. Public by design.
-- HTML files — all copy and the reCAPTCHA site key.
+- `js/main.js`. `RECAPTCHA_SITE_KEY`, `SHEETS_ENDPOINT`. Public by design.
+- HTML files. all copy and the reCAPTCHA site key.
 
 Out of source control (kept in Apps Script Script Properties or the user's `$HOME`):
 
-- `NOTIFY_EMAIL` — the inbox that receives notifications.
-- `SHEET_ID` — the Sheet to write into.
-- `RECAPTCHA_SECRET` — paired with the public site key.
-- `apps-script/.clasp.json` — pointer to the script project. Gitignored; ship `.clasp.json.example`.
-- `~/.clasprc.json` — clasp OAuth credentials. Lives in your home directory; gitignored as a safety net.
+- `NOTIFY_EMAIL`. the inbox that receives notifications.
+- `SHEET_ID`. the Sheet to write into.
+- `RECAPTCHA_SECRET`. paired with the public site key.
+- `apps-script/.clasp.json`. pointer to the script project. Gitignored; ship `.clasp.json.example`.
+- `~/.clasprc.json`. clasp OAuth credentials. Lives in your home directory; gitignored as a safety net.
 
-If you fork or copy this repo, the only "secret" that's hardcoded in the published JS is the reCAPTCHA *site* key — replace it with your own and the rest of the stack will use whatever Script Properties you set.
+If you fork or copy this repo, the only "secret" that's hardcoded in the published JS is the reCAPTCHA *site* key. replace it with your own and the rest of the stack will use whatever Script Properties you set.

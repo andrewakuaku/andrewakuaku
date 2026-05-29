@@ -11,7 +11,7 @@
 
 // ---------- config ----------
 // Where notification emails go. Set this via a Script Property called
-// NOTIFY_EMAIL — keeps personal addresses out of source control. If the
+// NOTIFY_EMAIL. keeps personal addresses out of source control. If the
 // property isn't set the script silently skips notifications so the form
 // still works for sheet writes.
 var NOTIFY_EMAIL = "";
@@ -26,7 +26,7 @@ var STATUS_REJECTED = "Rejected";
 
 // The Spreadsheet to write rows into. Set a Script Property named SHEET_ID
 // to either (a) the bare Sheet ID, or (b) the full https://docs.google.com/
-// spreadsheets/d/<ID>/edit URL — we extract the ID in case the URL was
+// spreadsheets/d/<ID>/edit URL. we extract the ID in case the URL was
 // pasted by mistake. If the property is missing we fall back to
 // getActiveSpreadsheet() for the bound-script case.
 function getTargetSpreadsheet() {
@@ -84,7 +84,7 @@ function doPost(e) {
       headers = sheet
         .getRange(1, 1, 1, sheet.getLastColumn())
         .getValues()[0];
-      // Add any new columns we haven't seen before — keep Status at the far
+      // Add any new columns we haven't seen before. keep Status at the far
       // right by removing/re-appending it if other fields arrived after it.
       fields.forEach(function (f) {
         if (headers.indexOf(f) === -1) {
@@ -105,7 +105,7 @@ function doPost(e) {
     sheet.appendRow(row);
 
     // Email myself the submission. Wrapped so a delivery failure can't
-    // make the form look broken to the visitor — the row is already saved.
+    // make the form look broken to the visitor. the row is already saved.
     try {
       notify(sheetName, fields, params, sheet.getLastRow());
     } catch (notifyErr) {
@@ -114,7 +114,7 @@ function doPost(e) {
 
     return json({ result: "success" });
   } catch (err) {
-    // Surface the stack trace too — Executions log shows it, and the JSON
+    // Surface the stack trace too. Executions log shows it, and the JSON
     // body lets a developer eyeball what went wrong from the browser.
     return json({ result: "error", message: String(err), stack: err && err.stack });
   } finally {
@@ -159,16 +159,17 @@ function json(obj) {
 /**
  * Emails me a readable summary of a submission. Sender is the script
  * owner's account (Apps Script default), reply-to is the visitor's email
- * if they provided one — so I can hit Reply and answer them directly.
+ * if they provided one. so I can hit Reply and answer them directly.
  */
 function notify(sheetName, fields, params, rowNumber) {
   var to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL") || NOTIFY_EMAIL;
   if (!to) return;
 
-  // Community applications surface the tier in the subject so I know
-  // at a glance which one they picked; everything else uses sheet name.
+  // Community applications surface the group in the subject so I know
+  // at a glance which one they picked; legacy values like "Graduates: $15/mo"
+  // get stripped down to just the group name.
   var subject;
-  var membership = params.membership ? String(params.membership).trim() : "";
+  var membership = params.membership ? String(params.membership).split(":")[0].trim() : "";
   if (membership) {
     subject = "[Portfolio] New " + membership + " application";
   } else {
@@ -181,7 +182,7 @@ function notify(sheetName, fields, params, rowNumber) {
   var emailKey = pickKey(params, ["email", "emailAddress", "email_address"]);
   var visitorName  = nameKey  ? String(params[nameKey]).trim()  : "";
   var visitorEmail = emailKey ? String(params[emailKey]).trim() : "";
-  if (visitorName) subject += " — " + visitorName;
+  if (visitorName) subject += " from " + visitorName;
 
   // Plain-text body so the email reads fine in any client; the sheet URL
   // at the bottom jumps straight to the appended row.
@@ -245,69 +246,112 @@ function addStatusValidation(sheet, statusCol) {
     .requireValueInList(["", STATUS_APPROVED, STATUS_REJECTED], true)
     .setAllowInvalid(false)
     .build();
-  // Apply to the column from row 2 to row 1000 — covers a comfortable
+  // Apply to the column from row 2 to row 1000. covers a comfortable
   // backlog without locking the user out of bulk-extending the column.
   sheet.getRange(2, statusCol, 999, 1).setDataValidation(rule);
 }
 
 /**
- * Installable onEdit trigger handler. Fires on any spreadsheet edit;
- * we filter for changes to the `status` column and send an email if the
- * new value is Approved or Rejected. Idempotent — re-setting to the same
+ * Installable onEdit trigger handler. Fires on any spreadsheet edit; we
+ * filter for changes to the status column and send an email if the new
+ * value is Approved or Rejected. Idempotent. re-setting to the same
  * value sends the email again, which is intentional (resend on demand).
+ * Logs every branch so the Executions panel can be used to diagnose
+ * "I toggled but nothing happened" symptoms.
  */
 function onEditApproval(e) {
-  if (!e || !e.range) return;
+  if (!e || !e.range) {
+    console.log("onEditApproval: no edit event payload"); return;
+  }
   var sheet = e.range.getSheet();
   var col = e.range.getColumn();
   var row = e.range.getRow();
-  if (row < 2) return; // header row
+  console.log("onEditApproval: edit on '" + sheet.getName() + "' row=" + row + " col=" + col + " value=" + e.value);
+  if (row < 2) { console.log("  → header row, ignoring"); return; }
 
   var lastCol = sheet.getLastColumn();
-  if (lastCol < 1) return;
+  if (lastCol < 1) { console.log("  → empty sheet, ignoring"); return; }
   var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  var statusCol = headers.indexOf(STATUS_COLUMN_NAME) + 1;
-  if (!statusCol || col !== statusCol) return; // edit was elsewhere
 
-  var newValue = String(e.value || "").trim();
-  if (newValue !== STATUS_APPROVED && newValue !== STATUS_REJECTED) return;
+  // Tolerate alternative spellings: "Status", "approval", etc.
+  var statusCol = 0;
+  for (var i = 0; i < headers.length; i++) {
+    var h = String(headers[i] || "").toLowerCase().trim();
+    if (h === "status" || h === "approval") { statusCol = i + 1; break; }
+  }
+  if (!statusCol) { console.log("  → no status/approval column found in headers: " + headers.join(",")); return; }
+  if (col !== statusCol) { console.log("  → edit was outside the status column (status is col " + statusCol + ")"); return; }
 
-  // Pull the row's data so the email can address the applicant by name
-  // and reference the group they applied for.
+  // e.value is unset for multi-cell pastes; fall back to reading the cell.
+  var newValue = String(e.value || sheet.getRange(row, col).getValue() || "").trim();
+  if (newValue.toLowerCase() !== STATUS_APPROVED.toLowerCase() &&
+      newValue.toLowerCase() !== STATUS_REJECTED.toLowerCase()) {
+    console.log("  → value '" + newValue + "' is not Approved/Rejected, ignoring");
+    return;
+  }
+  // Normalise capitalisation so the email branches reliably.
+  var status = newValue.toLowerCase() === STATUS_APPROVED.toLowerCase()
+    ? STATUS_APPROVED : STATUS_REJECTED;
+
   var values = sheet.getRange(row, 1, 1, lastCol).getValues()[0];
   var rowObj = {};
-  headers.forEach(function (h, i) { rowObj[h] = values[i]; });
+  headers.forEach(function (h, idx) { rowObj[h] = values[idx]; });
 
   var email = String(rowObj.email || rowObj.emailAddress || "").trim();
-  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    console.log("  → no valid email on row (got '" + email + "')"); return;
+  }
 
   try {
-    sendStatusEmail(email, newValue, rowObj);
+    sendStatusEmail(email, status, rowObj);
+    console.log("  ✓ sent " + status + " email to " + email);
   } catch (err) {
-    console.warn("status email failed: " + err);
+    console.warn("  ✗ MailApp.sendEmail failed: " + err);
   }
+}
+
+/**
+ * Manual test you can run from the editor to confirm the status-email
+ * pipeline works without involving the trigger. Set TEST_ROW to a real
+ * row in the Community tab, pick "Approved" or "Rejected", run.
+ */
+function testStatusEmail() {
+  var TEST_ROW = 2;
+  var TEST_STATUS = STATUS_APPROVED; // or STATUS_REJECTED
+  var sheet = getTargetSpreadsheet().getSheetByName("Community");
+  if (!sheet) { console.log("No 'Community' sheet."); return; }
+  var lastCol = sheet.getLastColumn();
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var values = sheet.getRange(TEST_ROW, 1, 1, lastCol).getValues()[0];
+  var rowObj = {};
+  headers.forEach(function (h, i) { rowObj[h] = values[i]; });
+  var email = String(rowObj.email || "").trim();
+  console.log("testStatusEmail: row " + TEST_ROW + " email=" + email + " group=" + rowObj.membership);
+  sendStatusEmail(email, TEST_STATUS, rowObj);
+  console.log("Sent.");
 }
 
 /** Compose + send the applicant-facing email for an approval/rejection. */
 function sendStatusEmail(email, status, rowObj) {
   var name = String(rowObj.name || rowObj.fullName || "").trim();
-  var group = String(rowObj.membership || "").trim();
+  // Strip any legacy pricing suffix ("Graduates: $15/mo" → "Graduates").
+  var group = String(rowObj.membership || "").split(":")[0].trim();
   var greeting = name ? "Hi " + name.split(" ")[0] + "," : "Hello,";
   var groupLabel = group ? " as a " + group : "";
 
   var subject, body;
   if (status === STATUS_APPROVED) {
-    subject = "You're in — welcome to the community";
+    subject = "You're in: welcome to the community";
     body = [
       greeting,
       "",
       "Good news: your application to join the community" + groupLabel + " has been approved.",
       "",
-      "I'll reach out personally over the next few days with what's next — how the community runs, the active projects and reading groups you can plug into, and a quick intro so the rest of the group knows who's joining.",
+      "I'll reach out personally over the next few days with what's next: how the community runs, the active projects and reading groups you can plug into, and a quick intro so the rest of the group knows who's joining.",
       "",
       "Glad to have you in.",
       "",
-      "— Andrew",
+      "Andrew",
     ].join("\n");
   } else {
     subject = "An update on your community application";
@@ -316,11 +360,11 @@ function sendStatusEmail(email, status, rowObj) {
       "",
       "Thanks for applying to the community" + groupLabel + ". After reviewing your application, I'm not able to bring you in at this time.",
       "",
-      "This isn't a judgement on you or your work — the community is intentionally small, and the fit has to be right for both sides. You're welcome to apply again later if your focus shifts.",
+      "This isn't a judgement on you or your work. The community is intentionally small, and the fit has to be right for both sides. You're welcome to apply again later if your focus shifts.",
       "",
       "Wishing you the best with what you're building.",
       "",
-      "— Andrew",
+      "Andrew",
     ].join("\n");
   }
 
@@ -331,6 +375,48 @@ function sendStatusEmail(email, status, rowObj) {
     name: "Andrew Akuaku",
     replyTo: PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL") || undefined,
   });
+}
+
+/**
+ * One-time migration: repurpose the now-unused `level` column as the
+ * `linkedin` column. If a separate `linkedin` column already exists
+ * (auto-added by recent submissions), copies its non-empty values into
+ * the renamed column and deletes the duplicate. Run this once from the
+ * editor; safe to re-run (becomes a no-op once migration is done).
+ */
+function migrateLevelToLinkedin() {
+  var ss = getTargetSpreadsheet();
+  var sheet = ss.getSheetByName("Community");
+  if (!sheet) { console.log("No 'Community' sheet found."); return; }
+
+  var lastCol = sheet.getLastColumn();
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var levelCol = headers.indexOf("level") + 1;
+  var linkedinCol = headers.indexOf("linkedin") + 1;
+
+  if (!levelCol) { console.log("No 'level' column. nothing to migrate."); return; }
+
+  // Rename `level` → `linkedin` in place.
+  sheet.getRange(1, levelCol).setValue("linkedin");
+  console.log("Renamed column " + levelCol + " from 'level' to 'linkedin'.");
+
+  // If a separate `linkedin` column existed, fold its values into the
+  // renamed column (bottom-most non-empty value wins per row), then drop it.
+  if (linkedinCol && linkedinCol !== levelCol) {
+    var lastRow = sheet.getLastRow();
+    if (lastRow >= 2) {
+      var src = sheet.getRange(2, linkedinCol, lastRow - 1, 1).getValues();
+      var dst = sheet.getRange(2, levelCol, lastRow - 1, 1).getValues();
+      for (var i = 0; i < src.length; i++) {
+        if (src[i][0] && !dst[i][0]) dst[i][0] = src[i][0];
+      }
+      sheet.getRange(2, levelCol, dst.length, 1).setValues(dst);
+    }
+    sheet.deleteColumn(linkedinCol);
+    console.log("Folded duplicate 'linkedin' column (was " + linkedinCol + ") into the renamed one and removed it.");
+  } else {
+    console.log("No duplicate 'linkedin' column to merge.");
+  }
 }
 
 /**

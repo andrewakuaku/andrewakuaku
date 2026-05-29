@@ -38,10 +38,9 @@
             Building with AI, for good.
           </h1>
           <p class="lead reveal">
-            A community in three groups — Students learning to build,
-            Graduates working on AI products and policy, and a small
-            curated room of Professionals shipping AI or shaping the
-            policy around it.
+            A community for students, entrepreneurs, and early-career builders learning to use AI
+            responsibly. Tools, resources, and people who want to ship products
+            for customers or influence policies with technology.
           </p>
           <div class="hero-cta reveal">
             <a href="#apply" class="btn btn-primary btn-lg">Apply to join</a>
@@ -57,7 +56,7 @@
             </div>
             <div class="showcase__caption">
               <h3>Three groups, one room.</h3>
-              <p>Students, Graduates, and a curated group of Professionals — all working on AI products, AI research, or the policy around them.</p>
+              <p>Students, Graduates, and a curated group of Professionals, all working on AI products, AI research, or the policy around them.</p>
             </div>
             <a href="#apply" class="cutout cutout--tl" aria-label="Apply to join the community">
               <svg class="fillet fillet--top" viewBox="0 0 32 32" aria-hidden="true"><path d="M32 32V0C32 17.6731 17.6731 32 0 32H32Z"/></svg>
@@ -109,11 +108,12 @@
       <div class="section-head reveal">
         <span class="eyebrow">Groups</span>
         <h2>Three groups, one community.</h2>
-        <p class="muted">Pick the one that fits where you are. Every application is read personally and reviewed before you're brought in.</p>
+        <p class="muted">Pick the group that fits where you are.</p>
       </div>
 
       <div class="grid grid-3">
         <div class="tier reveal">
+          <span class="eyebrow" style="position:absolute;top:0;left:30px;transform:translateY(-50%)">By approval</span>
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Students</h3>
           <p class="muted" style="font-size:14px;margin-top:6px">For students learning to build AI tools or working on AI research.</p>
           <ul>
@@ -126,6 +126,7 @@
         </div>
 
         <div class="tier reveal">
+          <span class="eyebrow" style="position:absolute;top:0;left:30px;transform:translateY(-50%)">By approval</span>
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Graduates</h3>
           <p class="muted" style="font-size:14px;margin-top:6px">For people working on AI products, AI policy, or anything in between.</p>
           <ul>
@@ -138,14 +139,14 @@
         </div>
 
         <div class="tier reveal">
-          <span class="eyebrow" style="position:absolute;top:-12px;left:30px">By approval</span>
+          <span class="eyebrow" style="position:absolute;top:0;left:30px;transform:translateY(-50%)">By approval</span>
           <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem">Professionals</h3>
-          <p class="muted" style="font-size:14px;margin-top:6px">A small, curated group for senior people in AI, plus policy and society leaders who want to influence where AI goes.</p>
+          <p class="muted" style="font-size:14px;margin-top:6px">A small, curated group for senior people in AI, plus policy and society leaders.</p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> A trusted room to test, ship, and deploy AI solutions</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> For AI researchers, builders, and policy / society leaders</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> You don't have to be technical — passion to shape policy and society counts</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Screened intake; everyone in the room is here on purpose</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> You don't have to be technical; passion to shape policy and society counts</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Hand-picked intake; everyone in the room is here on purpose</li>
           </ul>
           <a href="#apply" class="btn btn-ghost" data-membership="Professionals" style="width:100%;justify-content:center">Apply as Professional</a>
         </div>
@@ -194,6 +195,12 @@
         </div>
 
         <div class="field">
+          <label for="m-linkedin">LinkedIn URL</label>
+          <input id="m-linkedin" name="linkedin" type="url" required pattern="https?://([a-z]{2,3}\.)?linkedin\.com/.+" placeholder="https://www.linkedin.com/in/your-handle" />
+          <span class="error"></span>
+        </div>
+
+        <div class="field">
           <label for="m-plan">Group you'd like to join</label>
           <select id="m-plan" name="membership" required>
             <option value="">Select…</option>
@@ -224,7 +231,7 @@
         </div>
 
         <div class="field">
-          <label for="m-links">Links (GitHub, portfolio, LinkedIn), optional</label>
+          <label for="m-links">Other links (GitHub, portfolio, papers), optional</label>
           <input id="m-links" name="links" type="text" placeholder="https://github.com/…" />
           <span class="error"></span>
         </div>

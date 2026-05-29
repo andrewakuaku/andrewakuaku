@@ -303,6 +303,8 @@ async function getRecaptchaToken(action) {
         msg = "This field is required.";
       } else if (field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         msg = "Enter a valid email address.";
+      } else if (field.name === "linkedin" && !/^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/.+/i.test(value)) {
+        msg = "Enter a full LinkedIn URL (e.g. https://www.linkedin.com/in/your-handle).";
       }
       if (msg) {
         ok = false;
