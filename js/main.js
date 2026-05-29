@@ -212,7 +212,7 @@ const SHEETS_ENDPOINT =
    lives in Apps Script as a Script Property (RECAPTCHA_SECRET)
    so it never touches the client. See README.md.
    ============================================================ */
-const RECAPTCHA_SITE_KEY = "6LdXUxQsAAAAAKPwO5EreqApY46Eqm0UxeeW4dwI";
+const RECAPTCHA_SITE_KEY = "6Ld2WwMtAAAAAGjqqQRuceu-7oBsT_ny90mJQvQk";
 
 async function getRecaptchaToken(action) {
   if (typeof grecaptcha === "undefined" || !grecaptcha.execute) return null;

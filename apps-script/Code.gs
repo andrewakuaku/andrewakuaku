@@ -59,6 +59,10 @@ function doPost(e) {
     // verification is skipped so the form keeps working in development.
     var captcha = verifyRecaptcha(params.recaptchaToken);
     if (!captcha.ok) {
+      // Capture the rejection to a sheet so it's debuggable even when the
+      // Executions panel won't expand. Safe to remove once the captcha
+      // setup is stable.
+      try { logCaptchaReject(captcha, params); } catch (_) {}
       return json({ result: "error", message: "captcha-failed", reason: captcha.reason, score: captcha.score });
     }
     delete params.recaptchaToken; // don't store the token in the sheet
@@ -447,10 +451,39 @@ function installApprovalTrigger() {
  * Returns { ok, reason?, score? }. Skips verification gracefully if no
  * secret is configured (returns ok = true so dev/test flows still pass).
  */
+/**
+ * Append a row to a `_debug` sheet capturing why a submission was rejected
+ * by reCAPTCHA. Lets us see the siteverify response (hostname, error-codes,
+ * score) without expanding Apps Script's Executions log.
+ */
+function logCaptchaReject(captcha, params) {
+  var ss = getTargetSpreadsheet();
+  var sheet = ss.getSheetByName("_debug") || ss.insertSheet("_debug");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["at", "reason", "score", "errorCodes", "formName", "email", "tokenSent"]);
+    sheet.getRange(1, 1, 1, 7).setFontWeight("bold");
+  }
+  sheet.appendRow([
+    new Date(),
+    captcha.reason || "",
+    captcha.score != null ? captcha.score : "",
+    captcha.codes ? captcha.codes.join(",") : "",
+    params.formName || "",
+    params.email || "",
+    params.recaptchaToken ? "yes" : "no",
+  ]);
+}
+
 function verifyRecaptcha(token) {
   var secret = PropertiesService.getScriptProperties().getProperty("RECAPTCHA_SECRET");
-  if (!secret) return { ok: true, reason: "no-secret-configured" };
-  if (!token) return { ok: false, reason: "missing-token" };
+  if (!secret) {
+    console.log("verifyRecaptcha: no secret configured, skipping");
+    return { ok: true, reason: "no-secret-configured" };
+  }
+  if (!token) {
+    console.log("verifyRecaptcha: no token in submission");
+    return { ok: false, reason: "missing-token" };
+  }
 
   var response;
   try {
@@ -460,12 +493,18 @@ function verifyRecaptcha(token) {
       muteHttpExceptions: true,
     });
   } catch (err) {
+    console.log("verifyRecaptcha: siteverify fetch failed: " + err);
     return { ok: false, reason: "fetch-failed" };
   }
 
+  var raw = response.getContentText();
   var data = {};
-  try { data = JSON.parse(response.getContentText()); } catch (_) {}
-  if (!data.success) return { ok: false, reason: "rejected", score: data.score };
+  try { data = JSON.parse(raw); } catch (_) {}
+  // Log the full siteverify response so the cause (error-codes, hostname,
+  // score) is visible in Executions without guessing.
+  console.log("verifyRecaptcha: siteverify response = " + raw);
+
+  if (!data.success) return { ok: false, reason: "rejected", score: data.score, codes: data["error-codes"] };
   if (typeof data.score === "number" && data.score < 0.5) {
     return { ok: false, reason: "low-score", score: data.score };
   }
