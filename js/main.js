@@ -156,10 +156,12 @@
       closeAll();
       return;
     }
-    const link = e.target.closest('a[href^="#"]');
+    const link = e.target.closest('a[href*="#"]');
     if (link) {
-      const id = link.getAttribute("href").slice(1);
-      if (id && getDrawer(id)) {
+      const samePage =
+        link.pathname === location.pathname && link.host === location.host;
+      const id = link.hash ? link.hash.slice(1) : "";
+      if (samePage && id && getDrawer(id)) {
         e.preventDefault();
         openDrawer(id, link);
         applyMembershipFromTrigger(link);
