@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    .stroke { stroke: #0a0a0a; }
+    @media (prefers-color-scheme: dark) {
+      .stroke { stroke: #ffffff; }
+    }
+  </style>
+  <g class="stroke" fill="none" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter">
+    <!-- A1 -->
+    <path d="M17 90 L37 10 L57 90" />
+    <line x1="26" y1="55" x2="48" y2="55" />
+    <!-- A2 — left leg overlaps the right leg of A1 in the middle -->
+    <path d="M43 90 L63 10 L83 90" />
+    <line x1="52" y1="55" x2="74" y2="55" />
+  </g>
+</svg>
