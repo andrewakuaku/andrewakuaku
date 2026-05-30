@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <style>
     .stroke { stroke: #0a0a0a; }
+    .dot { fill: #0a0a0a; }
     @media (prefers-color-scheme: dark) {
       .stroke { stroke: #ffffff; }
+      .dot { fill: #ffffff; }
     }
   </style>
   <g class="stroke" fill="none" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter">
@@ -13,4 +15,6 @@
     <path d="M43 90 L63 10 L83 90" />
     <line x1="52" y1="55" x2="74" y2="55" />
   </g>
+  <!-- Period dot — sits at the baseline to the right of A2, accent-coloured -->
+  <circle class="dot" cx="93" cy="86" r="6" />
 </svg>
