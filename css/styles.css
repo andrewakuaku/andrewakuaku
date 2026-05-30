@@ -163,12 +163,45 @@ img { display: block; max-width: 100%; }
   justify-content: space-between;
 }
 .brand {
+  /* Stack the full name and the AA mark in the same grid cell so they can
+     crossfade in place. The wider element (the full name) sets the slot
+     width by default; once .is-condensed flips it, the AA mark takes over. */
+  display: inline-grid;
+  grid-template-areas: "stack";
+  align-items: center;
   font-family: "Space Grotesk", system-ui, sans-serif;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
 }
 .brand .dot { color: var(--accent); }
+.brand__full,
+.brand__mark {
+  grid-area: stack;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform-origin: left center;
+}
+.brand__mark {
+  width: auto;
+  height: 0.95em;
+  opacity: 0;
+  transform: scale(0.55);
+  color: var(--ink);
+}
+.brand__mark line { stroke: var(--accent); }
+/* On scroll past the threshold the header gets .is-condensed; the full
+   name fades out and the AA mark takes its place. Footer brand never
+   gets this class, so the full name stays in the footer always. */
+.site-header.is-condensed .brand__full {
+  opacity: 0;
+  transform: scale(0.55);
+}
+.site-header.is-condensed .brand__mark {
+  opacity: 1;
+  transform: scale(1);
+}
 .nav-links { display: flex; align-items: center; gap: 28px; }
 .nav-links a { font-size: 15px; color: var(--ink-muted); transition: color 0.15s ease; }
 .nav-links a:hover, .nav-links a.active { color: var(--ink); }

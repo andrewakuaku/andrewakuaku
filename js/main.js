@@ -29,6 +29,9 @@
     } else if (!goingDown) {
       header.classList.remove("is-hidden");
     }
+    // Past 40px the brand morphs from "Andrew Akuaku." to the AA mark; the
+    // CSS handles the crossfade + scale transition.
+    header.classList.toggle("is-condensed", y > 40);
     // Keep the menu closed while the bar is hidden.
     if (header.classList.contains("is-hidden")) {
       const links = header.querySelector(".nav-links");
