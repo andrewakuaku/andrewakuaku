@@ -184,17 +184,21 @@ img { display: block; max-width: 100%; }
   transform-origin: left center;
 }
 .brand__mark {
-  /* Renders as text in the same Space Grotesk weight as the rest of the
-     brand so the two A's match the A's in "Andrew Akuaku" exactly. The
-     second A is pulled left so its left leg overlaps the right leg of
-     the first A — the visual "they share a leg in the middle" effect. */
+  /* Renders as text in the same Space Grotesk family as the brand so the
+     A's match the A's in "Andrew Akuaku", but at a heavier weight and
+     larger size so the mark feels distinct from the full-name state.
+     The second A is pulled left so its left leg overlaps the right leg
+     of the first — the "they share a leg in the middle" effect. */
   display: inline-flex;
   align-items: baseline;
-  height: 1em;
-  font: inherit;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.6em;
+  line-height: 1;
   color: var(--ink);
   opacity: 0;
-  transform: scale(0.55);
+  transform: scale(0.45);
+  transform-origin: left center;
 }
 .brand__mark-overlap {
   margin-left: -0.42em;
