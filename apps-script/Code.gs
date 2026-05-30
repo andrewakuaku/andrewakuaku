@@ -317,6 +317,14 @@ function testStatusEmail() {
   console.log("Sent.");
 }
 
+// WhatsApp group invite links per group, surfaced in the approval email.
+// Keys must match the membership values stored in the sheet (case-insensitive).
+var WHATSAPP_LINKS = {
+  students:      "https://chat.whatsapp.com/GUCXd9iEafYGzPg1xxEtC7?s=cl&p=i&mlu=0",
+  graduates:     "https://chat.whatsapp.com/DBysVjo5BGBHkRiGC7jUGl?s=cl&p=i&mlu=0",
+  professionals: "https://chat.whatsapp.com/DnnFbiYjFD1JnlT1MSWiDj?s=cl&p=i&mlu=0",
+};
+
 /** Compose + send the applicant-facing email for an approval/rejection. */
 function sendStatusEmail(email, status, rowObj) {
   var name = String(rowObj.name || rowObj.fullName || "").trim();
@@ -328,17 +336,29 @@ function sendStatusEmail(email, status, rowObj) {
   var subject, body;
   if (status === STATUS_APPROVED) {
     subject = "You're in: welcome to the community";
-    body = [
+    var lines = [
       greeting,
       "",
       "Good news: your application to join the community" + groupLabel + " has been approved.",
       "",
       "I'll reach out personally over the next few days with what's next: how the community runs, the active projects and reading groups you can plug into, and a quick intro so the rest of the group knows who's joining.",
+    ];
+    // Drop the matching WhatsApp invite if we have one for this group.
+    var whatsappUrl = WHATSAPP_LINKS[group.toLowerCase()];
+    if (whatsappUrl) {
+      lines.push(
+        "",
+        "To start, join the " + group + " WhatsApp group here:",
+        whatsappUrl
+      );
+    }
+    lines.push(
       "",
       "Glad to have you in.",
       "",
-      "Andrew",
-    ].join("\n");
+      "Andrew"
+    );
+    body = lines.join("\n");
   } else {
     subject = "An update on your community application";
     body = [
