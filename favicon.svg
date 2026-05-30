@@ -7,14 +7,14 @@
       .dot { fill: #ffffff; }
     }
   </style>
-  <g class="stroke" fill="none" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter">
-    <!-- A1 -->
-    <path d="M17 90 L37 10 L57 90" />
-    <line x1="26" y1="55" x2="48" y2="55" />
+  <g class="stroke" fill="none" stroke-width="17" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- A1 with flat-top apex (matches Space Grotesk 700) -->
+    <path d="M9 90 L29 14 L41 14 L52 90" />
+    <line x1="20" y1="56" x2="42" y2="56" stroke-width="14" />
     <!-- A2 — left leg overlaps the right leg of A1 in the middle -->
-    <path d="M43 90 L63 10 L83 90" />
-    <line x1="52" y1="55" x2="74" y2="55" />
+    <path d="M38 90 L58 14 L70 14 L81 90" />
+    <line x1="49" y1="56" x2="71" y2="56" stroke-width="14" />
   </g>
-  <!-- Period dot — sits at the baseline to the right of A2, accent-coloured -->
-  <circle class="dot" cx="93" cy="86" r="6" />
+  <!-- Period dot, same near-black as the strokes (matches the on-page .dot) -->
+  <circle class="dot" cx="92" cy="85" r="6" />
 </svg>
