@@ -184,13 +184,21 @@ img { display: block; max-width: 100%; }
   transform-origin: left center;
 }
 .brand__mark {
-  width: auto;
-  height: 0.95em;
+  /* Renders as text in the same Space Grotesk weight as the rest of the
+     brand so the two A's match the A's in "Andrew Akuaku" exactly. The
+     second A is pulled left so its left leg overlaps the right leg of
+     the first A — the visual "they share a leg in the middle" effect. */
+  display: inline-flex;
+  align-items: baseline;
+  height: 1em;
+  font: inherit;
+  color: var(--ink);
   opacity: 0;
   transform: scale(0.55);
-  color: var(--ink);
 }
-.brand__mark line { stroke: var(--accent); }
+.brand__mark-overlap {
+  margin-left: -0.42em;
+}
 /* On scroll past the threshold the header gets .is-condensed; the full
    name fades out and the AA mark takes its place. Footer brand never
    gets this class, so the full name stays in the footer always. */
