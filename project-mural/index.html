@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mural Recognition App | Andrew Akuaku</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <meta name="description" content="A scan-to-learn app for the 150 Years of Women at UC Berkeley installation. Built with Next.js, OpenCV, and PostgreSQL." />
+  <meta name="description" content="A scan-to-learn app for the 150 Years of Women at UC Berkeley installation: point your camera at the mural to surface each alumna's story, with AI voice narration. Built with Next.js, OpenCV, Claude, and PostgreSQL." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,13 +58,13 @@
         </div>
         <div>
           <span class="project-meta__label">Stack</span>
-          <span class="project-meta__value">Next.js · OpenCV · PostgreSQL</span>
+          <span class="project-meta__value">Next.js · OpenCV · Claude · Postgres</span>
         </div>
       </div>
     </section>
 
     <section class="wrap" style="padding-bottom:16px">
-      <div class="browser-frame reveal" role="img" aria-label="Berkeley Mural app landing page: 'Point your camera at the mural to discover alumni stories' and a four-step How it works guide.">
+      <div class="browser-frame reveal" role="img" aria-label="UC Berkeley Mural app landing page: a frosted 'How it works' card with a four-step guide and a circular Start Scanning button.">
         <div class="browser-frame__bar">
           <div class="browser-frame__dots" aria-hidden="true">
             <span></span><span></span><span></span>
@@ -79,7 +79,7 @@
           <span style="width:52px" aria-hidden="true"></span>
         </div>
         <div class="browser-frame__body">
-          <img src="/assets/projects/mural-landing.png" alt="Berkeley Mural app landing page with a How it works guide and a Start Scanning call to action." />
+          <img src="/assets/projects/mural-landing.png" alt="UC Berkeley Mural app landing page with a frosted How it works guide and a circular Start Scanning call to action." />
         </div>
       </div>
     </section>
@@ -121,11 +121,20 @@
         </p>
         <p>
           I defined the product scope and the end-to-end user experience,
-          then built the computer-vision pipeline in OpenCV for image
-          processing and portrait recognition, and the full-stack app in
+          then built the computer-vision pipeline and the full-stack app in
           Next.js with PostgreSQL for serving biographies, citations, and
-          context in real time. The result is a quiet, low-friction layer
-          on top of the installation: point your phone, see the story.
+          context in real time. Recognition runs entirely in the browser
+          with OpenCV.js: rather than face recognition, it matches ORB
+          features and solves a homography to figure out which region of
+          the mural is in view, then maps that region to the people painted
+          there. No camera frames ever leave the device.
+        </p>
+        <p>
+          Tapping a detected portrait opens that alumna's profile, and an
+          optional voice mode reads her story aloud: Claude drafts a short,
+          first-person narration from her biography and ElevenLabs speaks
+          it. The result is a quiet, low-friction layer on top of the
+          installation: point your phone, and the wall starts talking back.
         </p>
         <p style="margin-top:8px">
           <a href="https://ue.berkeley.edu/projects-initiatives/guide-150-years-women-uc-berkeley-mural" target="_blank" rel="noopener" style="text-decoration:underline">Read the official UC Berkeley project page →</a>
