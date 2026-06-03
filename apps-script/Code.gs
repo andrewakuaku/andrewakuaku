@@ -3,10 +3,11 @@
  *
  * It receives form POSTs and appends a row to a tab in the bound
  * Spreadsheet. The tab is named by the form's `formName` field
- * ("Contact" or "Mentorship"); a header row is created automatically
- * from the first submission's field names.
+ * ("Contact" or "Community"); a header row is created automatically
+ * from the first submission's field names. Toggling the per-row `status`
+ * cell to Approved/Rejected emails the applicant (see onEditApproval).
  *
- * Setup is in README.md → "Connecting the forms to Google Sheets".
+ * Setup is in README.md → "Apps Script backend setup".
  */
 
 // ---------- config ----------
