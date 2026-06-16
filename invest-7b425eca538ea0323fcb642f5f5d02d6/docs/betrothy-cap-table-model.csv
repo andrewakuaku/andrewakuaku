@@ -1,0 +1,28 @@
+Betrothy SAFE and cap-table model. Edit the assumption cells; ownership computes. Directional only; not legal or financial advice.,,,
+,,,
+PART 1: SAFE ownership calculator (replace the Friend rows with real names and check amounts),,,
+Investor,Investment (USD),Post-money cap (USD),Ownership at conversion
+Friend 1,50000,1000000,=B5/C5
+Friend 2,25000,1000000,=B6/C6
+Friend 3,25000,1000000,=B7/C7
+Friend 4,20000,1000000,=B8/C8
+Friend 5,15000,1000000,=B9/C9
+Friend 6,10000,1000000,=B10/C10
+Friend 7,5000,1000000,=B11/C11
+Friend 8,,1000000,=B12/C12
+Round total (sum of checks),=SUM(B5:B12),1000000,=B13/C13
+Target for this round,150000,1000000,=B14/C14
+,,,
+PART 2: ownership snapshot when the round converts (before the next priced round adds new money),,,
+Holder,Ownership,,
+Option pool (reserved),0.1,,
+Friends and family SAFE round,=D13,,
+Founders,=1-B18-B19,,
+Total,=B18+B19+B20,,
+,,,
+NOTES,,,
+Ownership at conversion = investment / post-money cap (post-money SAFE rule).,,,
+Fill in the Friend rows with real names and amounts; the round total and the snapshot update automatically.,,,
+"Target is $150,000 (about 15%) at the $1,000,000 cap; the snapshot reflects the actual checks entered above.",,,
+The next priced round dilutes every holder above proportionally.,,,
+Use the official YC post-money SAFE and a securities attorney for the real round.,,,

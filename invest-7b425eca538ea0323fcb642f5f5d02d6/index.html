@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Unlisted, private page. Not linked from the public site and not indexed. -->
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Betrothy · A private invitation | Andrew Akuaku</title>
+  <meta name="description" content="A private invitation to help build Betrothy. Pitch deck, terms, and how to invest." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    /* Small supplements, built on the site's own tokens, for components the
+       portfolio doesn't already have (download rows, deck strip, step numbers). */
+    .num-badge { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 600; font-size: 18px; }
+    .zmail { font-family: "Space Grotesk", system-ui, sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--ink); word-break: break-all; }
+    .fundlist { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 11px; }
+    .fundlist li { display: flex; gap: 11px; font-size: 15px; color: var(--ink-muted); }
+    .fundlist li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-top: 7px; flex: none; }
+    /* single click-to-expand documents container */
+    .docs-panel { padding: 0; overflow: hidden; }
+    .docs-panel > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 22px 24px; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 500; font-size: 1.1rem; color: var(--ink); }
+    .docs-panel > summary::-webkit-details-marker { display: none; }
+    .docs-panel > summary .docs-count { margin-left: auto; font-family: "Inter", system-ui, sans-serif; font-weight: 400; font-size: 14px; color: var(--ink-muted); }
+    .docs-panel > summary .chev { transition: transform 0.2s ease; color: var(--ink-muted); flex: none; }
+    .docs-panel[open] > summary .chev { transform: rotate(180deg); }
+    .docs-panel[open] > summary { border-bottom: 1px solid var(--line); }
+    .docs-list a { display: flex; align-items: center; gap: 16px; padding: 16px 24px; text-decoration: none; border-top: 1px solid var(--line); transition: background 0.15s ease; }
+    .docs-list a:first-child { border-top: 0; }
+    .docs-list a:hover { background: var(--accent-light); }
+    .docs-list .dmeta { display: flex; flex-direction: column; min-width: 0; }
+    .docs-list .dt { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 500; font-size: 16px; color: var(--ink); }
+    .docs-list .ds { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+    .docs-list .darr { margin-left: auto; color: var(--ink-muted); flex: none; }
+    /* steps list, same container style as the documents */
+    .steps-list .step-row { display: flex; align-items: flex-start; gap: 16px; padding: 18px 24px; border-top: 1px solid var(--line); }
+    .steps-list .step-row:first-child { border-top: 0; }
+    .steps-list .step-n { flex: none; width: 30px; height: 30px; border-radius: 999px; background: var(--accent-light); color: var(--accent); display: grid; place-items: center; font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 600; font-size: 15px; }
+    .steps-list .dmeta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .steps-list .step-t { font-family: "Space Grotesk", system-ui, sans-serif; font-weight: 500; font-size: 16px; color: var(--ink); }
+    .steps-list .step-d { font-size: 14px; color: var(--ink-muted); line-height: 1.55; }
+    .invest-cta { margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <!-- ===== header (matches the rest of the site) ===== -->
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="/"><span class="brand__full">Andrew Akuaku<span class="dot">.</span></span><span class="brand__mark" aria-hidden="true">A<span class="brand__mark-overlap">A</span><span class="dot">.</span></span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/portfolio/">Portfolio</a>
+        <a href="/community/">Community</a>
+        <a href="/contact/">Contact</a>
+        <a href="/contact/#contact" class="btn btn-primary">Work with me</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== hero ===== -->
+    <section class="hero wrap">
+      <div class="hero-grid">
+        <div class="reveal">
+          <span class="eyebrow">Private invitation · friends and family</span>
+          <h1 style="margin-top:18px">Get a SAFE in Betrothy.</h1>
+          <p class="lead">
+            Betrothy is a community with the tools to help with the transition
+            from relationship to engagement, to marriage, and beyond. I'm raising a small friends-and-family round to launch it,
+            and I want the people closest to me in first.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg" href="docs/betrothy-pitch-deck.pdf" download>
+              Download the pitch deck
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+            </a>
+            <a class="btn btn-ghost btn-lg" href="#invest">How to invest</a>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <article class="cutout-card showcase" style="min-height:520px">
+            <div class="cutout-card__media">
+              <img src="img/founder.jpg" alt="Andrew Akuaku, founder of Betrothy" style="object-position: center 25%; filter: grayscale(1);" />
+              <div class="cutout-card__scrim"></div>
+            </div>
+            <div class="showcase__caption">
+              <h3>Andrew Akuaku</h3>
+              <p>Founder of Betrothy</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat">
+          <b>$5,000</b>
+          <span>registers the company and funds the first four months</span>
+        </div>
+        <div class="stat m-violet">
+          <b>$1M cap</b>
+          <span>post-money SAFE, favorable to early backers</span>
+        </div>
+        <div class="stat m-sage">
+          <b>~15%</b>
+          <span>of the company across the full $150,000 round</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== the ask ===== -->
+    <section class="section wrap" id="ask">
+      <div class="section-head reveal">
+        <span class="eyebrow">The ask</span>
+        <h2>An initial $5,000 to launch Betrothy.</h2>
+        <p class="muted">
+          The immediate need is $5,000 to register the company and cover the first four months, so
+          Betrothy can launch and bring on its first users. It is the opening piece of a small
+          friends-and-family round, and every contribution moves it forward.
+        </p>
+      </div>
+
+      <div class="cta-banner m-blush reveal">
+        <div class="cta-banner__inner">
+          <h2>What you would be investing in</h2>
+          <p>
+            I am raising a friends-and-family round of up to $150,000 on a standard post-money SAFE at
+            a $1,000,000 cap, which is about 15% of the company across the round. Your ownership is
+            roughly your investment divided by the cap, so a $10,000 investment is about 1%. The minimum
+            investment is $500, and larger commitments are welcome.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-2 reveal" style="margin-top:24px">
+        <div class="card">
+          <div class="icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h3>Where the first $5,000 goes</h3>
+          <ul class="fundlist">
+            <li>Company registration and legal setup</li>
+            <li>First four months of runway</li>
+            <li>Reaching and onboarding the first users</li>
+            <li>Product, hosting, and AI costs</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+          </div>
+          <h3>How the round works</h3>
+          <ul class="fundlist">
+            <li>Instrument: standard Y Combinator post-money SAFE</li>
+            <li>Cap: $1,000,000 post-money, about 15% for the full round</li>
+            <li>Your ownership: roughly your investment divided by the cap</li>
+            <li>Minimum investment of $500, larger commitments welcome</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== how to invest ===== -->
+    <section class="section wrap" id="invest">
+      <div class="section-head reveal">
+        <span class="eyebrow">How to invest</span>
+        <h2>Four simple steps.</h2>
+        <p class="muted">
+          The process is simple. Review the documents, choose an amount you are comfortable with, sign
+          the agreement, and send it. Everything is executed on a standard SAFE, so you have a clear
+          record of your investment.
+        </p>
+      </div>
+
+      <details class="card docs-panel reveal" open>
+        <summary>
+          <span>The steps</span>
+          <span class="docs-count">4 steps</span>
+          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="steps-list">
+          <div class="step-row"><span class="step-n">1</span><span class="dmeta"><span class="step-t">Read the docs</span><span class="step-d">Start with the one-pager and the deck, then the friends-and-family terms and the cap table below.</span></span></div>
+          <div class="step-row"><span class="step-n">2</span><span class="dmeta"><span class="step-t">Choose your amount</span><span class="step-d">The minimum investment is $500. Use the cap table to see what your investment converts to at the $1M cap.</span></span></div>
+          <div class="step-row"><span class="step-n">3</span><span class="dmeta"><span class="step-t">Sign the SAFE</span><span class="step-d">Download the agreement below, fill in your name, amount, and the date, and sign it. Any PDF signer works, or print and sign.</span></span></div>
+          <div class="step-row"><span class="step-n">4</span><span class="dmeta"><span class="step-t">Send and fund</span><span class="step-d">Email the signed SAFE and send your investment by Zelle. I countersign, return a copy for your records, and your investment is confirmed.</span></span></div>
+        </div>
+      </details>
+
+      <div class="grid grid-2 reveal invest-cta">
+        <div class="card">
+          <span class="eyebrow">The agreement</span>
+          <h3 style="margin-top:16px">Betrothy SAFE, ready to sign</h3>
+          <p>The standard Y Combinator post-money SAFE, filled in for Betrothy at the $1,000,000 cap. Fill in your name, amount, and date, sign, and email it back to me to countersign.</p>
+          <a class="btn btn-primary" href="docs/betrothy-safe-agreement.pdf" download style="margin-top:18px">
+            Download to sign
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+          </a>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Zelle to</span>
+          <div class="zmail" id="zmail" style="margin-top:16px">andrewakuaku@berkeley.edu</div>
+          <p style="margin-top:8px">Please include your name in the note. You can reach me at the same address with any questions.</p>
+          <button class="btn btn-ghost" id="copybtn" type="button" style="margin-top:18px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            Copy email
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== the documents ===== -->
+    <section class="section wrap" id="docs">
+      <div class="section-head reveal">
+        <span class="eyebrow">The documents</span>
+        <h2>Everything, to download and keep.</h2>
+        <p class="muted">
+          The full set of investor materials. The deck and one-pager are the place to start. The terms
+          and cap table show exactly how the round works.
+        </p>
+      </div>
+
+      <details class="card docs-panel reveal" open>
+        <summary>
+          <span>All documents</span>
+          <span class="docs-count">8 files</span>
+          <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="docs-list">
+          <a href="docs/betrothy-pitch-deck.pdf" download><span class="dmeta"><span class="dt">Pitch deck</span><span class="ds">PDF · 24 slides · 2.0 MB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-one-pager.pdf" download><span class="dmeta"><span class="dt">One-page summary</span><span class="ds">PDF · 81 KB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-safe-agreement.pdf" download><span class="dmeta"><span class="dt">SAFE agreement (ready to sign)</span><span class="ds">PDF · YC post-money SAFE · 114 KB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-friends-and-family.pdf" download><span class="dmeta"><span class="dt">Friends and family round</span><span class="ds">PDF · 118 KB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-equity-and-cap-table.pdf" download><span class="dmeta"><span class="dt">Equity and cap table</span><span class="ds">PDF · 128 KB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-cap-table-model.csv" download><span class="dmeta"><span class="dt">Cap table calculator</span><span class="ds">CSV · open in any spreadsheet</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-safe-draft.pdf" download><span class="dmeta"><span class="dt">How a SAFE works (a primer)</span><span class="ds">PDF · 140 KB</span></span><span class="darr">↓</span></a>
+          <a href="docs/betrothy-market-research.pdf" download><span class="dmeta"><span class="dt">Market research</span><span class="ds">PDF · 254 KB</span></span><span class="darr">↓</span></a>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== the fine print ===== -->
+    <section class="section-sm wrap">
+      <div class="card reveal">
+        <span class="eyebrow">Important disclosures</span>
+        <p class="muted" style="margin-top:16px; font-size:14px; line-height:1.7">
+          This page is a private message to friends and family, not a public offer or solicitation, and
+          nothing here is legal, tax, or financial advice. Investing in an early company is risky and you
+          could lose your money. Any investment will be made on a standard Y Combinator post-money SAFE,
+          and I will confirm the final terms and your investor status in writing before anything is signed.
+          A SAFE is issued by an existing company, so I will form Betrothy, Inc. first (part of what the
+          first $5,000 funds) and countersign from the company. Thank you for taking the time to consider it.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== footer (matches the rest of the site) ===== -->
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="/"><span class="brand__full">Andrew Akuaku<span class="dot">.</span></span><span class="brand__mark" aria-hidden="true">A<span class="brand__mark-overlap">A</span><span class="dot">.</span></span></a>
+        <p class="footer-note">A private page shared by link. Please do not post it publicly.</p>
+      </div>
+      <div class="socials">
+        <a href="mailto:andrewakuaku@berkeley.edu" aria-label="Email">Email</a>
+        <a href="https://www.linkedin.com/in/andrewakuaku/" aria-label="LinkedIn">LinkedIn</a>
+        <a href="https://www.ischool.berkeley.edu/people/andrew-akuaku" aria-label="UC Berkeley iSchool">UC Berkeley</a>
+      </div>
+    </div>
+    <div class="wrap"><p class="footer-note" style="margin-top:24px">© <span data-year>2026</span> Andrew Akuaku. All rights reserved.</p></div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    (function(){
+      var btn = document.getElementById('copybtn');
+      var mail = 'andrewakuaku@berkeley.edu';
+      if(!btn) return;
+      var label = btn.lastChild;
+      btn.addEventListener('click', function(){
+        var done = function(){
+          label.textContent = ' Copied';
+          setTimeout(function(){ label.textContent = ' Copy email'; }, 1800);
+        };
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(mail).then(done, done);
+        } else {
+          var r = document.createRange(); r.selectNode(document.getElementById('zmail'));
+          window.getSelection().removeAllRanges(); window.getSelection().addRange(r);
+          try{ document.execCommand('copy'); }catch(e){}
+          done();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
