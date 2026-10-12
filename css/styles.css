@@ -1031,6 +1031,18 @@ body.is-locked { overflow: hidden; }
   line-height: 1.7;
 }
 .project-content li strong { font-weight: 600; }
+.project-content .stage-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+}
+.project-content .source-note {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
 
 .next-project {
   border-top: 1px solid var(--line);
